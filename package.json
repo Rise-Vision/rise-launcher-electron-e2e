@@ -5,6 +5,13 @@
   "main": "main.js",
   "license": "ISC",
   "scripts": {
-    "test": "echo 'none'"
+    "test": "echo 'none'",
+    "start": "node main"
+  },
+  "dependencies": {
+    "koa": "^1.1.2",
+    "koa-route": "^2.4.2",
+    "windows-shortcuts": "git://github.com/Rise-Vision/windows-shortcuts.git",
+    "rise-common-electron": "git://github.com/Rise-Vision/rise-common-electron.git"
   }
 }

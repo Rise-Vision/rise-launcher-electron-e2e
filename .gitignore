@@ -5,3 +5,4 @@ test/test-results.xml
 *.zip
 *.jar
 external-deps/java-network-test/target/
+!*.exe

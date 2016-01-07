@@ -1,7 +1,4 @@
-const downloader = require("./downloader.js"),
-execFileSync = require("child_process").execFileSync;
+const webhook = require("./webhook.js");
 
-downloader.downloadInstaller()
-.then(()=>{
-  execFileSync("./install.exe", ["--unattended"]);
-});
+global.log = require("rise-common-electron").logger();
+webhook.listen();
