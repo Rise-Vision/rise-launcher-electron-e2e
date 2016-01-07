@@ -1,0 +1,7 @@
+node_modules/
+builds/
+coverage/
+test/test-results.xml
+*.zip
+*.jar
+external-deps/java-network-test/target/

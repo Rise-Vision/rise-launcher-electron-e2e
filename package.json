@@ -1,0 +1,10 @@
+{
+  "name": "rise-launcher-electron-e2e",
+  "version": "1.0.0",
+  "description": "e2e tests",
+  "main": "main.js",
+  "license": "ISC",
+  "scripts": {
+    "test": "echo 'none'"
+  }
+}
