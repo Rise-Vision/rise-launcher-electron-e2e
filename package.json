@@ -6,7 +6,7 @@
   "license": "ISC",
   "scripts": {
     "test": "echo 'none'",
-    "start": "node main"
+    "start": "node main --debug"
   },
   "dependencies": {
     "koa": "^1.1.2",
