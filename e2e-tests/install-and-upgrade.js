@@ -2,6 +2,7 @@ const downloader = require("../downloader.js"),
 versioning = require("../versioning.js"),
 cleanPrevious = require("../clean-previous.js"),
 presentation = require("../presentation.js"),
+cacheCheck = require("../cache-check.js");
 platform = require("rise-common-electron").platform,
 installerStarter = require("../installer-starter.js");
 
@@ -18,6 +19,8 @@ module.exports = function*(version) {
   yield versioning.checkInstalledTarget((foundTarget)=>{return foundTarget.indexOf(version) > -1;});
 
   yield presentation.confirmPresentationVisibility();
+
+  yield cacheCheck();
 
   installerStarter.startInstalledVersionForUpgrade(version);
 
