@@ -2,7 +2,7 @@ const downloader = require("../downloader.js"),
 versioning = require("../versioning.js"),
 cleanPrevious = require("../clean-previous.js"),
 presentation = require("../presentation.js"),
-cacheCheck = require("../cache-check.js");
+cacheCheck = require("../cache-check.js"),
 platform = require("rise-common-electron").platform,
 installerStarter = require("../installer-starter.js");
 
@@ -10,7 +10,7 @@ module.exports = function*(version) {
   log.debug(`Using bundle version ${version}`);
   yield cleanPrevious;
 
-  yield downloader.downloadInstaller(version);
+  yield downloader.downloadInstaller(version, this).catch((err)=>{this.throw(err);});
 
   yield platform.setFilePermissions(downloader.getDownloadedInstallerFilePath(), 0755);
 

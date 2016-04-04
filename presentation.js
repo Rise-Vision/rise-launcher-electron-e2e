@@ -1,8 +1,8 @@
 var execSync = require("child_process").execSync,
-path = require("path"),
+os = process.platform === "linux" ? "lnx" : "win",
 expectedMd5 = require("fs").readFileSync("expected-md5.txt", {encoding: "utf8"}),
-md5Cmd = "certUtil -hashfile screen.png MD5",
-screenshotCmd = "nircmd.exe savescreenshot screen.png",
+md5Cmd = (os === "lnx" ? "md5sum screen.png" : "certUtil -hashfile screen.png MD5"),
+screenshotCmd = (os === "lnx" ? "scrot screen.png" : "nircmd.exe savescreenshot screen.png"),
 cmdOpts = {cwd:__dirname, encoding: "utf8"};
 
 function checkScreen() {

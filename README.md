@@ -4,8 +4,8 @@
 
 ```bash
 npm install
-echo [displayidtext] > displayid.txt
-echo [md5] > expected-md5.txt
+echo -n [displayidtext] > displayid.txt
+echo -n [md5] > expected-md5.txt
 npm start
 ```
 
@@ -13,7 +13,9 @@ npm start
 
 *md5* contains the expected md5 result of the display's presentation screenshot:  eg `"e1 db 21 c2 16 ea bf 6b 11 84 bd 8d 0a 3d d9 5d"`
 
-an md5 can be generated via `node screenshot-test.js`
+On Windows an md5 can be generated via `node screenshot-test.js`
+
+On Linux `scrot -d 5` and `md5sum` can be used.
 
 ### Test download, install, and upgrade using a specific version
 

@@ -2,7 +2,8 @@ const fs = require("fs"),
 path = require("path"),
 ws = require("windows-shortcuts"),
 platform = require("rise-common-electron").platform,
-startupLnkFilePath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk");
+startupLnkFilePath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk"),
+ubuntuStartupFilePath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop");
 
 function getTarget() {
   if (platform.isWindows()) {
@@ -13,6 +14,11 @@ function getTarget() {
         log.debug("installed target: " + queryResult.target);
         res(queryResult.target);
       });
+    });
+  } else {
+    return platform.readTextFile(ubuntuStartupFilePath)
+    .catch(()=>{
+      return Promise.resolve("");
     });
   }
 }
