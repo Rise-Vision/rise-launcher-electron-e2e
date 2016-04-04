@@ -1,19 +1,29 @@
 const route = require("koa-route"),
-path = require("path"),
 koa = require("koa")();
-
-var isBusy = false;
 
 koa.on("error", (err)=>{
   log.debug(`server error: ${err.message}`);
-  isBusy = false;
+  koa.context.isBusy = false;
 });
 
 koa.use(function* busy(next) {
-  if (isBusy) {return this.throw(503);}
-  isBusy = true;
-  this.req.on("close", ()=>{isBusy = false});
+  if (koa.context.isBusy) {return this.throw(503);}
+
+  koa.context.isBusy = true;
+  this.timeouts = {};
+
+  this.req.on("close", handleClose(this));
+
   yield next;
+
+  function handleClose(requestContext) {
+    return ()=>{
+      koa.context.isBusy = false;
+      Object.keys(requestContext.timeouts).forEach((key)=>{
+        clearTimeout(requestContext.timeouts[key]);
+      });
+    };
+  }
 });
 
 koa.use(function* initialFailingStatus(next) {
@@ -28,7 +38,7 @@ koa.use(route.get("/install-and-upgrade/:version", require("./e2e-tests/install-
 module.exports = {
   listen() {
     var port = 9950;
-    koa.listen(port).timeout = 0;
+    koa.listen(port).timeout = 10000;
     log.debug(`listening on ${port}`);
   }
 };

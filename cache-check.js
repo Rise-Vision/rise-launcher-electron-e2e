@@ -11,15 +11,15 @@ function pingCache() {
   .catch((err)=>{return false;});
 }
 
-module.exports = function cacheCheck() {
+module.exports = function cacheCheck(ctx) {
   log.debug("Pinging cache");
   return pingCache()
   .then((pong)=>{
     if (pong) {return true;}
 
     return new Promise((res)=>{
-      setTimeout(()=>{
-        res(cacheCheck());
+      ctx.timeouts.cacheCheck = setTimeout(()=>{
+        res(cacheCheck(ctx));
       }, 5000);
     });
   });
