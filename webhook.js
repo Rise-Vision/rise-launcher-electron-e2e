@@ -38,7 +38,7 @@ koa.use(route.get("/install-and-upgrade/:version", require("./e2e-tests/install-
 module.exports = {
   listen() {
     var port = 9950;
-    koa.listen(port).timeout = 10000;
+    koa.listen(port).timeout = 60 * 1000 * 5;
     log.debug(`listening on ${port}`);
   }
 };
