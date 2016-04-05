@@ -16,17 +16,17 @@ module.exports = function*(version) {
 
   installerStarter.startDownloadedInstaller();
 
-  yield versioning.checkInstalledTarget((foundTarget)=>{return foundTarget.indexOf(version) > -1;});
+  yield versioning.checkInstalledTarget((foundTarget)=>{return foundTarget.indexOf(version) > -1;}, this);
 
-  yield presentation.confirmPresentationVisibility();
+  yield presentation.confirmPresentationVisibility(this);
 
-  yield cacheCheck();
+  yield cacheCheck(this);
 
   installerStarter.startInstalledVersionForUpgrade(version);
 
-  yield versioning.checkInstalledTarget((foundTarget)=>{return foundTarget.indexOf(version) === -1;});
+  yield versioning.checkInstalledTarget((foundTarget)=>{return foundTarget.indexOf(version) === -1;}, this);
 
-  yield presentation.confirmPresentationVisibility();
+  yield presentation.confirmPresentationVisibility(this);
 
   yield (function* pass() {this.body = 200; this.status = 200;});
 };

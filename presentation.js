@@ -12,11 +12,11 @@ function checkScreen() {
 }
 
 module.exports = {
-  confirmPresentationVisibility() {
+  confirmPresentationVisibility(ctx) {
     return new Promise((res)=>{
-      setTimeout(()=>{
+      ctx.timeouts.presentation = setTimeout(()=>{
         if (checkScreen()) {return res();}
-        res(module.exports.confirmPresentationVisibility());
+        res(module.exports.confirmPresentationVisibility(ctx));
       }, 5000);
     });
   }

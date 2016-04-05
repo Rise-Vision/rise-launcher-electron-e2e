@@ -6,7 +6,7 @@ startupLnkFilePath = path.join(platform.getAutoStartupPath(), "Rise Vision Playe
 
 function getTarget() {
   if (platform.isWindows()) {
-    return new Promise((res, rej)=>{
+    return new Promise((res)=>{
       ws.query(startupLnkFilePath, (err, queryResult)=>{
         if (err) {log.debug("lnk check error: " + err); return res("");}
 
@@ -18,16 +18,17 @@ function getTarget() {
 }
 
 module.exports = {
-  checkInstalledTarget(comparator) {
+  checkInstalledTarget(comparator, ctx) {
     log.debug("checking startup target file");
+
     return getTarget()
     .then((foundTarget)=>{
       if (comparator(foundTarget)) { return; }
 
       return new Promise((res)=>{
-        setTimeout(()=>{
-          res(module.exports.checkInstalledTarget(comparator));
-        }, 5000);
+        ctx.timeouts.installedTarget = setTimeout(()=>{
+          res(module.exports.checkInstalledTarget(comparator, ctx));
+        }, 4000);
       });
     });
   }
