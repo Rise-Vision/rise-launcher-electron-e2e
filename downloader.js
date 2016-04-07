@@ -3,7 +3,7 @@ os = process.platform === "linux" ? "lnx" : "win",
 fileSuffix = (os === "lnx" ? "sh" : "exe"),
 downloadedInstallerFileName = "installer." + fileSuffix,
 arch = process.arch === "x64" ? "64" : "32",
-baseUrl = "http://install-versions.risevision.com/VERSION/installer-OS-ARCH.SUFFIX",
+baseUrl = "http://install-versions.risevision.com/",
 http = require("http"),
 fs = require("fs");
 
@@ -12,7 +12,7 @@ module.exports = {
     const file = fs.createWriteStream(downloadedInstallerFileName);
 
     return new Promise((res, rej)=>{
-      sendRequest(baseUrl.replace("VERSION", version).replace("OS", os).replace("ARCH", arch).replace("SUFFIX", fileSuffix));
+      sendRequest(`${baseUrl}${version}/installer-${os}-${arch}.${fileSuffix}`);
 
       function sendRequest(dest) {
         log.debug(`downloading ${dest}`);
