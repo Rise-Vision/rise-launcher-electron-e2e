@@ -1,5 +1,8 @@
 const route = require("koa-route"),
-koa = require("koa")();
+koa = require("koa")(),
+argv = require('yargs')
+  .alias('p', 'port')
+  .argv;
 
 koa.on("error", (err, ctx)=>{
   log.debug(`server error: ${err.message}`);
@@ -42,7 +45,7 @@ koa.use(function* (next) {
 
 module.exports = {
   listen() {
-    var port = 9950;
+    var port = argv.port || 9950;
     koa.listen(port).timeout = 60 * 1000 * 5;
     log.debug(`listening on ${port}`);
   }
