@@ -11,7 +11,7 @@ killChrome = platform.isWindows() ? "taskkill /f /im chrome.exe" : "pkill -f chr
 killInstaller = platform.isWindows() ? "taskkill /f /im installer" : "pkill -f installer";
 
 module.exports = function* cleanPreviousRun() {
-  yield platform.killJava();
+  try { platform.killJava(); } catch(err){}
   try {execSync(killChrome);} catch (err){}
   try {execSync(killInstaller);} catch (err){}
   yield platform.deleteRecursively(platform.getInstallDir());
