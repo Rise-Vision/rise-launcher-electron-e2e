@@ -1,10 +1,19 @@
 const route = require("koa-route"),
 koa = require("koa")();
 
-koa.on("error", (err)=>{
+koa.on("error", (err, ctx)=>{
   log.debug(`server error: ${err.message}`);
-  koa.context.isBusy = false;
+  endRunCleanup(ctx);
 });
+
+function endRunCleanup(requestContext) {
+  log.debug("End of run");
+  koa.context.isBusy = false;
+
+  Object.keys(requestContext.timeouts).forEach((key)=>{
+    clearTimeout(requestContext.timeouts[key]);
+  });
+}
 
 koa.use(function* busy(next) {
   if (koa.context.isBusy) {return this.throw(503);}
@@ -12,19 +21,9 @@ koa.use(function* busy(next) {
   koa.context.isBusy = true;
   this.timeouts = {};
 
-  this.req.on("close", handleClose(this));
+  this.req.on("close", endRunCleanup.bind(null, this));
 
   yield next;
-
-  function handleClose(requestContext) {
-    return ()=>{
-      log.debug("connection closed");
-      koa.context.isBusy = false;
-      Object.keys(requestContext.timeouts).forEach((key)=>{
-        clearTimeout(requestContext.timeouts[key]);
-      });
-    };
-  }
 });
 
 koa.use(function* initialFailingStatus(next) {
@@ -35,6 +34,11 @@ koa.use(function* initialFailingStatus(next) {
 });
 
 koa.use(route.get("/install-and-upgrade/:version", require("./e2e-tests/install-and-upgrade.js")));
+
+koa.use(function* (next) {
+  endRunCleanup(this);
+  yield next;
+});
 
 module.exports = {
   listen() {
