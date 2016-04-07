@@ -1,9 +1,13 @@
-var execSync = require("child_process").execSync,
+var fs = require("fs"),
+execSync = require("child_process").execSync,
 os = process.platform === "linux" ? "lnx" : "win",
-expectedMd5 = require("fs").readFileSync("expected-md5.txt", {encoding: "utf8"}),
 md5Cmd = (os === "lnx" ? "md5sum screen.png" : "certUtil -hashfile screen.png MD5"),
 screenshotCmd = (os === "lnx" ? "scrot screen.png" : "nircmd.exe savescreenshot screen.png"),
-cmdOpts = {cwd:__dirname, encoding: "utf8"};
+cmdOpts = {cwd:__dirname, encoding: "utf8"},
+expectedMd5 = fs.readFileSync("expected-md5.txt", {encoding: "utf8"});
+
+// Trim last character. Without this, the screenshot test fails on Ubuntu
+expectedMd5 = expectedMd5.slice(0, expectedMd5.length - 1);
 
 function checkScreen() {
   log.debug("taking screenshot");
@@ -16,7 +20,7 @@ module.exports = {
     return new Promise((res)=>{
       ctx.timeouts.presentation = setTimeout(()=>{
         if (checkScreen()) {return res();}
-        res(module.exports.confirmPresentationVisibility(ctx));
+        return res(module.exports.confirmPresentationVisibility(ctx));
       }, 5000);
     });
   }
