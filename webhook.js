@@ -18,6 +18,7 @@ koa.use(function* busy(next) {
 
   function handleClose(requestContext) {
     return ()=>{
+      log.debug("connection closed");
       koa.context.isBusy = false;
       Object.keys(requestContext.timeouts).forEach((key)=>{
         clearTimeout(requestContext.timeouts[key]);
