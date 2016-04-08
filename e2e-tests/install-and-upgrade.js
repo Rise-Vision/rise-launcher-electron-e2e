@@ -29,6 +29,7 @@ module.exports = function*(version) {
   yield presentation.confirmPresentationVisibility(this);
 
   (function passed(ctx) {
+    log.debug("Passed");
     ctx.body = 200;
     ctx.status = 200;
     ctx.app.context.isBusy = false;
