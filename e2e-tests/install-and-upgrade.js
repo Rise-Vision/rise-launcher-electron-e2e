@@ -28,5 +28,9 @@ module.exports = function*(version) {
 
   yield presentation.confirmPresentationVisibility(this);
 
-  yield (function* pass() {this.body = 200; this.status = 200;});
+  (function passed(ctx) {
+    ctx.body = 200;
+    ctx.status = 200;
+    this.app.context.isBusy = false;
+  }(this));
 };

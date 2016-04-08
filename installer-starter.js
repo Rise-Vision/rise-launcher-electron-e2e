@@ -9,10 +9,10 @@ module.exports = {
     extractorOptions = platform.isWindows() ? windowsExtractorOptions : linuxExtractorOptions;
 
     log.debug("starting downloaded installer");
-    platform.startProcess(downloadedFilePath, extractorOptions);
+    platform.startProcess(downloadedFilePath, extractorOptions, 9);
   },
   startInstalledVersionForUpgrade(version) {
     log.debug("starting installed installer");
-    platform.startProcess(platform.getInstallerPath(version), ["--unattended", "--rollout-pct=100", "--skip-countdown"]);
+    platform.startProcess(platform.getInstallerPath(version), ["--unattended", "--rollout-pct=100", "--skip-countdown"], 9);
   }
 };
