@@ -13,7 +13,7 @@ function endRunCleanup(requestContext) {
   log.debug("End of run");
   koa.context.isBusy = false;
 
-  if (!requestContent || !requestContent.timeouts) {return;}
+  if (typeof requestContent === "undefined" || !requestContent.timeouts) {return;}
 
   Object.keys(requestContext.timeouts).forEach((key)=>{
     clearTimeout(requestContext.timeouts[key]);
