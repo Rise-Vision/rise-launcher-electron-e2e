@@ -31,6 +31,6 @@ module.exports = function*(version) {
   (function passed(ctx) {
     ctx.body = 200;
     ctx.status = 200;
-    this.app.context.isBusy = false;
+    ctx.app.context.isBusy = false;
   }(this));
 };
