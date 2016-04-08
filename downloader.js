@@ -29,7 +29,7 @@ module.exports = {
           .on("close", ()=>{
             res();
           })
-          .on("error", (err)=>{console.dir(err); rej();});
+          .on("error", (err)=>{console.dir(err); rej(err);});
         });
       }
     });
