@@ -10,7 +10,10 @@ module.exports = function*(version) {
   log.debug(`Using bundle version ${version}`);
   yield cleanPrevious;
 
-  yield downloader.downloadInstaller(version, this).catch((err)=>{this.throw(err);});
+  yield downloader.downloadInstaller(version, this).catch((err)=>{
+    log.debug("download error " + require("util").inspect(err));
+    this.throw(500);
+  });
 
   yield platform.setFilePermissions(downloader.getDownloadedInstallerFilePath(), 0755);
 
