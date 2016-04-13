@@ -37,5 +37,30 @@ module.exports = {
         }, 4000);
       });
     });
+  },
+
+  checkOldVersionDeleted(ctx) {
+    log.debug("checking that old version was deleted");
+    const versionDir = platform.getInstallDir("2016.2.4");
+    var oldVersionExists;
+
+    try {
+      fs.statSync("versionDir"); // If this doesn't throw, it exists
+      oldVersionExists = true;
+    } catch(err){
+      if (err.code === 'ENOENT') {
+        oldVersionExists = false;
+      }
+    };
+
+    if (!oldVersionExists) {
+      return Promise.resolve();
+    }
+
+    return new Promise((res)=>{
+      ctx.timeouts.oldVersionCheck = setTimeout(()=>{
+        res(module.exports.checkOldVersionDeleted(ctx));
+      }, 4000);
+    });
   }
 };

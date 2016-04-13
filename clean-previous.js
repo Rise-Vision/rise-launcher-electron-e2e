@@ -17,4 +17,5 @@ module.exports = function* cleanPreviousRun() {
   yield platform.deleteRecursively(platform.getInstallDir());
   yield platform.deleteRecursively(startupFile);
   yield platform.writeTextFile(path.join(platform.getInstallDir(), "RiseDisplayNetworkII.ini"), idCfg);
+  fs.mkdirSync(path.join(platform.getInstallDir("2016.2.4")));
 };
