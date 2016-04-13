@@ -21,6 +21,8 @@ module.exports = function*(version) {
 
   yield versioning.checkInstalledTarget((foundTarget)=>{return foundTarget.indexOf(version) > -1;}, this);
 
+  yield versioning.checkOldVersionDeleted(this);
+
   yield presentation.confirmPresentationVisibility(this);
 
   yield cacheCheck(this);
@@ -37,4 +39,6 @@ module.exports = function*(version) {
     ctx.status = 200;
     ctx.app.context.isBusy = false;
   }(this));
+
+  yield cleanPrevious;
 };
