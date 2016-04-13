@@ -42,11 +42,10 @@ module.exports = {
   checkOldVersionDeleted(ctx) {
     log.debug("checking that old version was deleted");
     const versionDir = platform.getInstallDir("2016.2.4");
-    var oldVersionExists;
+    var oldVersionExists = true;
 
     try {
-      fs.statSync("versionDir"); // If this doesn't throw, it exists
-      oldVersionExists = true;
+      fs.statSync(versionDir); // If this doesn't throw, it exists
     } catch(err){
       if (err.code === 'ENOENT') {
         oldVersionExists = false;
