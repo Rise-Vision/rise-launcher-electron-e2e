@@ -15,8 +15,8 @@ module.exports = function* cleanPreviousRun() {
   yield platform.killJava();
   try {execSync(killChrome);} catch (err){}
   try {execSync(killInstaller);} catch (err){}
-  yield platform.deleteRecursively(platform.getInstallDir());
-  yield platform.deleteRecursively(startupFile);
+  yield platform.deleteRecursively(platform.getInstallDir()).catch((err)=>{log.debug(err);});
+  yield platform.deleteRecursively(startupFile).catch((err)=>{log.debug(err);});
   yield platform.writeTextFile(path.join(platform.getInstallDir(), "RiseDisplayNetworkII.ini"), idCfg);
   fs.mkdirSync(path.join(platform.getInstallDir("2016.2.4")));
   yield registry.resetDpiSettings();
