@@ -13,6 +13,7 @@
     "koa-route": "^2.4.2",
     "rise-common-electron": "git://github.com/Rise-Vision/rise-common-electron.git",
     "windows-shortcuts": "git://github.com/Rise-Vision/windows-shortcuts.git",
+    "winreg": "^1.0.1",
     "yargs": "^4.4.0"
   }
 }

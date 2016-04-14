@@ -4,6 +4,7 @@ cleanPrevious = require("../clean-previous.js"),
 presentation = require("../presentation.js"),
 cacheCheck = require("../cache-check.js"),
 platform = require("rise-common-electron").platform,
+registry = require("../registry.js"),
 installerStarter = require("../installer-starter.js");
 
 module.exports = function*(version) {
@@ -22,6 +23,8 @@ module.exports = function*(version) {
   yield versioning.checkInstalledTarget((foundTarget)=>{return foundTarget.indexOf(version) > -1;}, this);
 
   yield versioning.checkOldVersionDeleted(this);
+
+  yield registry.checkDpiSettings(this);
 
   yield presentation.confirmPresentationVisibility(this);
 
