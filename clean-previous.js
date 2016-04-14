@@ -3,6 +3,7 @@ platform = require("rise-common-electron").platform,
 path = require("path"),
 os = process.platform === "linux" ? "lnx" : "win",
 fs = require("fs"),
+registry = require("./registry.js"),
 idCfg = fs.readFileSync(path.join(__dirname, "displayid.txt")),
 startupLnkFilePath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk"),
 ubuntuStartupFilePath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop"),
@@ -18,4 +19,5 @@ module.exports = function* cleanPreviousRun() {
   yield platform.deleteRecursively(startupFile);
   yield platform.writeTextFile(path.join(platform.getInstallDir(), "RiseDisplayNetworkII.ini"), idCfg);
   fs.mkdirSync(path.join(platform.getInstallDir("2016.2.4")));
+  yield registry.resetDpiSettings();
 };
