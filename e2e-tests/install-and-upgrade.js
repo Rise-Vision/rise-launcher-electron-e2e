@@ -30,6 +30,8 @@ module.exports = function*(version) {
 
   installerStarter.startInstalledVersionForUpgrade(version);
 
+  yield versioning.confirmProductionInstall(this);
+
   yield presentation.confirmPresentationVisibility(this);
 
   (function passed(ctx) {

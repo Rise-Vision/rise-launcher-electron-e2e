@@ -1,9 +1,11 @@
 const path = require("path"),
+network = require("rise-common-electron").network,
 os = process.platform === "linux" ? "lnx" : "win",
 fileSuffix = (os === "lnx" ? "sh" : "exe"),
 downloadedInstallerFileName = "installer." + fileSuffix,
 arch = process.arch === "x64" ? "64" : "32",
 baseUrl = "http://install-versions.risevision.com/",
+configFile = "electron-remote-components",
 http = require("http"),
 fs = require("fs");
 
@@ -36,5 +38,13 @@ module.exports = {
   },
   getDownloadedInstallerFilePath() {
     return path.join(__dirname, downloadedInstallerFileName);
+  },
+  getProductionVersionNumber() {
+    return network.httpFetch(`${baseUrl}${configFile}-${os}-${arch}.json`)
+    .then((resp)=>{
+      return resp.json();
+    }).then((json)=>{
+      return json.InstallerElectronVersion;
+    });
   }
 };
