@@ -20,19 +20,17 @@ module.exports = function*(version) {
 
   installerStarter.startDownloadedInstaller();
 
-  yield versioning.checkInstalledTarget((foundTarget)=>{return foundTarget.indexOf(version) > -1;}, this);
+  yield presentation.confirmPresentationVisibility(this);
 
   yield versioning.checkOldVersionDeleted(this);
 
   yield registry.checkDpiSettings(this);
 
-  yield presentation.confirmPresentationVisibility(this);
-
   yield cacheCheck(this);
 
   installerStarter.startInstalledVersionForUpgrade(version);
 
-  yield versioning.checkInstalledTarget((foundTarget)=>{return foundTarget.indexOf(version) === -1;}, this);
+  yield versioning.confirmProductionInstall(this);
 
   yield presentation.confirmPresentationVisibility(this);
 
