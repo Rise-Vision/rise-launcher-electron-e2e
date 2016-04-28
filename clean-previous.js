@@ -18,6 +18,6 @@ module.exports = function* cleanPreviousRun() {
   yield platform.deleteRecursively(platform.getInstallDir()).catch((err)=>{log.debug(err);});
   yield platform.deleteRecursively(startupFile).catch((err)=>{log.debug(err);});
   yield platform.writeTextFile(path.join(platform.getInstallDir(), "RiseDisplayNetworkII.ini"), idCfg);
-  fs.mkdirSync(path.join(platform.getInstallDir("2016.2.4")));
+  try {fs.mkdirSync(path.join(platform.getInstallDir("2016.2.4")));} catch(err) {}
   yield registry.resetDpiSettings();
 };
