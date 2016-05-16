@@ -14,7 +14,7 @@ module.exports = {
     const file = fs.createWriteStream(downloadedInstallerFileName);
 
     return new Promise((res, rej)=>{
-      sendRequest(`${baseUrl}${version}/installer-${os}-${arch}.${fileSuffix}`);
+      sendRequest(`${baseUrl}staging/${version}/installer-${os}-${arch}.${fileSuffix}`);
 
       function sendRequest(dest) {
         log.debug(`downloading ${dest}`);

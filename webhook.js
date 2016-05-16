@@ -6,6 +6,7 @@ argv = require('yargs')
 
 koa.on("error", (err, ctx)=>{
   log.debug(`server error: ${err.message}`);
+  log.debug(err.stack);
   endRunCleanup(ctx);
 });
 
