@@ -4,7 +4,7 @@ os = process.platform === "linux" ? "lnx" : "win",
 fileSuffix = (os === "lnx" ? "sh" : "exe"),
 downloadedInstallerFileName = "installer." + fileSuffix,
 arch = process.arch === "x64" ? "64" : "32",
-baseUrl = "http://install-versions.risevision.com/staging/",
+baseUrl = "http://install-versions.risevision.com/",
 configFile = "electron-remote-components",
 http = require("http"),
 fs = require("fs");
