@@ -1,25 +1,28 @@
 const fs = require("fs"),
-downloader = require("./downloader.js"),
 platform = require("rise-common-electron").platform;
 
 module.exports = {
-  confirmProductionInstall(ctx) {
-    return downloader.getProductionVersionNumber()
-    .then((prodVer)=>{
-      try {
-        fs.statSync(platform.getInstallDir(prodVer));
-        log.debug("production version found");
-        return;
-      } catch (err) {
-        log.debug("waiting for production version");
+  confirmProductionInstall(stagedVersion, ctx) {
+    return waitForProductionInstall();
 
-        return new Promise((res)=>{
-          ctx.timeouts.productionVersionCheck = setTimeout(()=>{
-            res(module.exports.confirmProductionInstall(ctx));
-          }, 4000);
-        });
+    function waitForProductionInstall() {
+      try {
+        fs.statSync(platform.getInstallDir(stagedVersion));
+        log.debug("waiting for deletion of staged version after production version postinstall");
+        return delayedRetry(waitForProductionInstall);
+      } catch (err) {
+        log.debug("staged version has been removed as expected");
+        return;
       }
-    });
+    }
+
+    function delayedRetry(fn) {
+      return new Promise((res)=>{
+        ctx.timeouts.productionVersionCheck = setTimeout(()=>{
+          res(fn());
+        }, 4000);
+      });
+    }
   },
   checkOldVersionDeleted(ctx) {
     log.debug("checking that old version was deleted");

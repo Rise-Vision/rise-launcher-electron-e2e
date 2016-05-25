@@ -9,7 +9,7 @@ startupLnkFilePath = path.join(platform.getAutoStartupPath(), "Rise Vision Playe
 ubuntuStartupFilePath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop"),
 startupFile = os === "lnx" ? ubuntuStartupFilePath : startupLnkFilePath,
 killChrome = platform.isWindows() ? "taskkill /f /im chrome.exe" : "pkill -f chrome-linux",
-killInstaller = platform.isWindows() ? "taskkill /f /im installer" : "pkill -f installer";
+killInstaller = platform.isWindows() ? "taskkill /f /im installer.exe" : "pkill -f installer";
 
 module.exports = function* cleanPreviousRun() {
   yield platform.killJava();

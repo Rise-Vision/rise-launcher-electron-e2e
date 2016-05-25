@@ -6,7 +6,7 @@
 npm install
 echo -n [displayidtext] > displayid.txt
 echo -n [md5] > expected-md5.txt
-npm start
+node main.js --debug --port=[port]  #optionally add a shortcut to autostart
 ```
 
 *displayidtext* contains the display id:  eg `"displayid=AAAAAAAA"`
