@@ -5,6 +5,7 @@ presentation = require("../presentation.js"),
 cacheCheck = require("../cache-check.js"),
 platform = require("rise-common-electron").platform,
 registry = require("../registry.js"),
+shortcuts = require("../shortcuts.js"),
 installerStarter = require("../installer-starter.js");
 
 module.exports = function*(version) {
@@ -23,6 +24,8 @@ module.exports = function*(version) {
   yield presentation.confirmPresentationVisibility(this);
 
   yield versioning.checkOldVersionDeleted(this);
+
+  yield shortcuts.checkShortcutsNameAndTarget(this, version);
 
   yield registry.checkDpiSettings(this);
 
