@@ -95,7 +95,7 @@ function checkShortcutList(version) {
     {
       linux: {
         location: autostartPath,
-        target: `bash -c '${path.join(installDir, "Installer", "scripts", "start.sh --unattended")}')`
+        target: `bash -c '${path.join(installDir, "Installer", "scripts", "start.sh --unattended")}'`
       },
       windows: {
         location: autostartPath,
