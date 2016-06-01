@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 const ws = require("windows-shortcuts");
 const platform = require("rise-common-electron").platform;
@@ -16,6 +17,10 @@ function checkShortcut(shortcut) {
   }
 }
 
+function escapeStringRegex(s) {
+  return s.replace('.', '\\.');
+}
+
 function checkWindowsShortcut(shortcut) {
   return new Promise((res, rej) => {
     ws.query(shortcut.location, (err, result) => {
@@ -29,17 +34,17 @@ function checkWindowsShortcut(shortcut) {
       } else {
         rej();
       }
-    })
+    });
   });
 }
 
 function checkLinuxShortcut(shortcut) {
   let fileContents;
-  const nameRegex = RegExp(`\n\s*Name=${shortcut.name}`);
-  const targetRegex = RegExp(`\n\s*Exec=${shortcut.target}`);
+  const nameRegex = RegExp(`\\n\\s*Name=${escapeStringRegex(shortcut.name)}`);
+  const targetRegex = RegExp(`\\n\\s*Exec=${escapeStringRegex(shortcut.target)}`);
   return new Promise((res, rej) => {
     try {
-      fileContents = fs.readTextFileSync(shortcut.location);
+      fileContents = fs.readFileSync(shortcut.location, 'utf8');
       if (nameRegex.test(fileContents) && targetRegex.test(fileContents)) {
         res();
       } else {
@@ -113,23 +118,20 @@ module.exports = {
   },
 
   checkShortcutsNameAndTarget(ctx, version) {
-    let res;
-    const shortcutsPromise = new Promise((_res) => {
-      res = _res;
-    })
+    return new Promise((res) => {
+      function curriedCheckShortcutsNameAndTarget() {
+        log.debug("Checking shortcuts");
+        checkShortcutList(version)
+          .then(res)
+          .catch(() => {
+            log.debug("Shortcut check failed");
+            ctx.timeouts.checkShortcutList = setTimeout(() => {
+              curriedCheckShortcutsNameAndTarget()
+            }, 4000)
+          });
+      }
 
-    function curriedCheckShortcutsNameAndTarget() {
-      log.debug("Checking shortcuts");
-      checkShortcutList(version)
-        .then(res)
-        .catch(() => {
-          log.debug("Shortcut check failed");
-          ctx.timeouts.checkShortcutList = setTimeout(() => {
-            curriedCheckShortcutsNameAndTarget()
-          }, 4000)
-        });
-    }
-    curriedCheckShortcutsNameAndTarget();
-    return shortcutsPromise;
+      curriedCheckShortcutsNameAndTarget();
+    });
   }
 };
