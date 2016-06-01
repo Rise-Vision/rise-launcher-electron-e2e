@@ -17,8 +17,23 @@ function checkShortcut(shortcut) {
   }
 }
 
+function checkScriptExists(script) {
+  try {
+    fs.statSync(script);
+    return Promise.resolve();
+  } catch (e) {
+    return Promise.reject();
+  }
+}
+
 function escapeStringRegex(s) {
   return s.replace(/\./g, '\\.');
+}
+
+function getInstallDir(version) {
+  return platform.isWindows() ?
+    path.join(process.env["LOCALAPPDATA"], "rvplayer", version) :
+    path.join(process.env["HOME"], "rvplayer", version);
 }
 
 function checkWindowsShortcut(shortcut) {
@@ -57,10 +72,7 @@ function checkLinuxShortcut(shortcut) {
 }
 
 function checkShortcutList(version) {
-  const installDir = platform.isWindows() ?
-    path.join(process.env["LOCALAPPDATA"], "rvplayer", version) :
-    path.join(process.env["HOME"], "rvplayer", version);
-
+  const installDir = getInstallDir(version);
   const shortcuts = [
     {
       linux: {
@@ -113,9 +125,46 @@ function checkShortcutList(version) {
   return Promise.all(shortcuts.map(checkShortcut));
 }
 
+function checkScriptList(version) {
+  const installDir = getInstallDir(version);
+
+  const scriptPaths = platform.isWindows() ?
+    [
+      path.join(installDir, "Installer", "scripts", "background.jse"),
+      path.join(installDir, "Installer", "scripts", "restart.bat"),
+      path.join(installDir, "Installer", "scripts", "start.bat"),
+      path.join(installDir, "Installer", "scripts", "stop.bat"),
+      path.join(installDir, "Installer", "scripts", "uninstall.bat")
+    ] : // End of Windows Script Paths
+    [
+      path.join(installDir, "Installer", "scripts", "restart.sh"),
+      path.join(installDir, "Installer", "scripts", "start.sh"),
+      path.join(installDir, "Installer", "scripts", "stop.sh"),
+      path.join(installDir, "Installer", "scripts", "uninstall.sh")
+    ];
+
+    return Promise.all(scriptPaths.map(checkScriptExists));
+}
+
 module.exports = {
   getAutostartPath() {
     return autostartPath;
+  },
+
+  checkScriptsExist(ctx, version) {
+    return new Promise((res) => {
+      function curriedCheckScriptsExist() {
+        log.debug("Checking scripts");
+        checkScriptList(version)
+          .then(res)
+          .catch(() => {
+            log.debug("Script check failed");
+            ctx.timeouts.checkShortcutList = setTimeout(curriedCheckScriptsExist, 4000)
+          });
+      }
+
+      curriedCheckScriptsExist();
+    });
   },
 
   checkShortcutsNameAndTarget(ctx, version) {

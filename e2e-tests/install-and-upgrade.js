@@ -25,6 +25,8 @@ module.exports = function*(version) {
 
   yield versioning.checkOldVersionDeleted(this);
 
+  yield shortcuts.checkScriptsExist(this, version);
+
   yield shortcuts.checkShortcutsNameAndTarget(this, version);
 
   yield registry.checkDpiSettings(this);
