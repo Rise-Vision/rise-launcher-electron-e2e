@@ -7,7 +7,7 @@ const programsDirectory = platform.isWindows() ?
   path.join(process.env.HOME, ".local", "share", "applications");
 const autostartPath = platform.isWindows() ?
   path.join(programsDirectory, "Startup", "Rise Vision Player.lnk") :
-  path.join(process.env.HOME, ".config", "autostart", "rvplayer");
+  path.join(process.env.HOME, ".config", "autostart", "rvplayer.desktop");
 
 function checkShortcut(shortcut) {
   if (platform.isWindows()) {
@@ -18,7 +18,7 @@ function checkShortcut(shortcut) {
 }
 
 function escapeStringRegex(s) {
-  return s.replace('.', '\\.');
+  return s.replace(/\./g, '\\.');
 }
 
 function checkWindowsShortcut(shortcut) {
@@ -88,7 +88,7 @@ function checkShortcutList(version) {
     },
     {
       linux: {
-        location: path.join(programsDirectory, "rvplayer", "rvplayer-uninstall.desktop"),
+        location: path.join(programsDirectory, "rvplayer-uninstall.desktop"),
         name: "Uninstall Rise Vision Player",
         target: path.join(installDir, "Installer", "scripts", "uninstall.sh")
       },
@@ -100,6 +100,7 @@ function checkShortcutList(version) {
     {
       linux: {
         location: autostartPath,
+        name: "Rise Vision Player",
         target: `bash -c '${path.join(installDir, "Installer", "scripts", "start.sh --unattended")}'`
       },
       windows: {
@@ -125,9 +126,7 @@ module.exports = {
           .then(res)
           .catch(() => {
             log.debug("Shortcut check failed");
-            ctx.timeouts.checkShortcutList = setTimeout(() => {
-              curriedCheckShortcutsNameAndTarget()
-            }, 4000)
+            ctx.timeouts.checkShortcutList = setTimeout(curriedCheckShortcutsNameAndTarget, 4000)
           });
       }
 
