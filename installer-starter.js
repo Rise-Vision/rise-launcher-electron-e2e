@@ -14,5 +14,9 @@ module.exports = {
   startInstalledVersionForUpgrade(version) {
     log.debug("starting installed installer");
     platform.startProcess(platform.getInstallerPath(version), ["--unattended", "--rollout-pct=100", "--skip-countdown"], 9);
+  },
+  startInstalledVersionAttended(version) {
+    log.debug("starting installed installer attended");
+    platform.startProcess(platform.getInstallerPath(version), [], 9);
   }
 };

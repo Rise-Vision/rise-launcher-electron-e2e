@@ -6,6 +6,7 @@ cacheCheck = require("../cache-check.js"),
 platform = require("rise-common-electron").platform,
 registry = require("../registry.js"),
 shortcuts = require("../shortcuts.js"),
+proxy = require("../proxy.js"),
 installerStarter = require("../installer-starter.js");
 
 module.exports = function*(version) {
@@ -32,6 +33,14 @@ module.exports = function*(version) {
   yield registry.checkDpiSettings(this);
 
   yield cacheCheck(this);
+
+  yield proxy.setupProxy();
+
+  installerStarter.startInstalledVersionAttended(version);
+
+  yield proxy.confirmPacScript(this);
+
+  proxy.resetDisplayConfig();
 
   installerStarter.startInstalledVersionForUpgrade(version);
 
