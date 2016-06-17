@@ -76,14 +76,14 @@ function checkShortcutList(version) {
   const shortcuts = [
     {
       linux: {
-        location: path.join(programsDirectory, "rvplayer-restart.desktop"),
-        name: "Restart Rise Vision Player",
-        target: path.join(installDir, "Installer", "scripts", "start.sh")
+        location: path.join(programsDirectory, "rvplayer-start.desktop"),
+        name: "Start Rise Vision Player",
+        target: path.join(installDir, "Installer", "scripts", "start.sh --unattended")
       },
       windows: {
-        location: path.join(programsDirectory, "Rise Vision", "Restart Rise Vision Player.lnk"),
+        location: path.join(programsDirectory, "Rise Vision", "Start Rise Vision Player.lnk"),
         target: path.join(installDir, "Installer", "scripts", "background.jse"),
-        args: "start.bat"
+        args: "start.bat --unattended"
       }
     },
     {
