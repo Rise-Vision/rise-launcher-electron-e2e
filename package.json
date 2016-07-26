@@ -11,7 +11,7 @@
   "dependencies": {
     "koa": "^1.1.2",
     "koa-route": "^2.4.2",
-    "rise-common-electron": "git://github.com/Rise-Vision/rise-common-electron.git",
+    "rise-common-electron": "git://github.com/Rise-Vision/rise-common-electron.git#c6b1c575aa94f7ed1c5ca4bb490a1769d55c69de",
     "windows-shortcuts": "git://github.com/Rise-Vision/windows-shortcuts.git",
     "winreg": "^1.0.1",
     "yargs": "^4.4.0"
