@@ -7,6 +7,7 @@ platform = require("rise-common-electron").platform,
 registry = require("../registry.js"),
 shortcuts = require("../shortcuts.js"),
 proxy = require("../proxy.js"),
+screenshotReq = require("../screenshot-request.js"),
 installerStarter = require("../installer-starter.js");
 
 module.exports = function*(version) {
@@ -35,6 +36,8 @@ module.exports = function*(version) {
   yield cacheCheck(this);
 
   yield proxy.setupProxy();
+
+  yield screenshotReq.checkScreenshotSaved(this);
 
   installerStarter.startInstalledVersionAttended(version);
 
