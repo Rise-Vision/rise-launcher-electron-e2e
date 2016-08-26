@@ -13,14 +13,19 @@ module.exports = {
 
     return new Promise((res, rej)=>{
       var fakeClient = messaging.createClient();
+      var dateNow = new Date().toUTCString();
 
       fakeClient.connect((data)=>{
         if (data.msg === "screenshot-saved" &&
-            data.displayId === displayId && data.clientId === fakeClient.clientId) {
-          request.head(validateUrl, (err, resp, body)=>{
+            data.displayId === displayId && data.clientId === fakeClient.getClientId()) {
+          request.head({ url: validateUrl, headers: { "If-Modified-Since": dateNow } }, (err, resp, body)=>{
             if(err || resp.statusCode !== 200) {
               log.debug("screenshot not found", body);
               rej(err || resp.statusCode);
+            }
+            else if(resp.statusCode === 304) {
+              log.debug("Image not uploaded by this process");
+              rej(resp.statusCode);
             }
             else {
               log.debug("screenshot saved");
@@ -34,8 +39,8 @@ module.exports = {
         }
       })
       .then(()=>{
-        var screenshotParams = "&did=" + displayId + "&cid=" + fakeClient.clientId + "&url=" + signedUrl,
-            screenshotUrl = messaging.serverUrl + "?sk=" + messaging.serverKey + screenshotParams + "&msg=screenshot";
+        var screenshotParams = "&did=" + displayId + "&cid=" + fakeClient.getClientId() + "&url=" + encodeURIComponent(signedUrl),
+            screenshotUrl = messaging.serverUrl + screenshotParams + "&msg=screenshot";
 
         request(screenshotUrl, (err, resp, body)=>{
           if(err || resp.statusCode !== 200) {

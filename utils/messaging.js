@@ -1,6 +1,6 @@
 const Primus = require("primus");
 const serverKey = process.env.SERVERKEY;
-const serverUrl = "https://display-messaging.risevision.com:3001/?serverkey=" + serverKey,
+const serverUrl = "https://display-messaging.risevision.com:3001/?sk=" + serverKey,
       clientUrl = "https://display-messaging.risevision.com:3000";
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
     return createConnection(clientUrl, displayId);
   },
   createClient() {
-    return createConnection(serverUrl);
+    return createConnection(clientUrl);
   }
 };
 
@@ -23,7 +23,7 @@ function createConnection(url, displayId) {
   let connection, clientId;
 
   return {
-    clientId,
+    getClientId() { return clientId; },
     connect(handler) {
       return new Promise((res)=>{
         const Socket = Primus.createSocket({
@@ -31,14 +31,16 @@ function createConnection(url, displayId) {
           parser: "json"
         });
 
-        connection = new Socket(url + displayId ? "&displayId=" + displayId : "");
+        connection = new Socket(url + (displayId ? "&displayId=" + displayId : ""));
 
         connection.on("data", (data)=>{
+          if(data.msg === "client-connected" && !displayId) {
+            clientId = data.clientId;
+            res();
+          }
+
           if(handler) {
             handler(data);
-          }
-          else if(data.connection && !displayId) {
-            clientId = data.connection.id;
           }
         });
 
@@ -47,8 +49,13 @@ function createConnection(url, displayId) {
         });
 
         connection.on("open", ()=>{
-          res();
+          if(displayId) {
+            res();
+          }
         });
+
+
+        console.log("Opening connection");
 
         connection.open();
       });
