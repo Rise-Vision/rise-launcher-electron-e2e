@@ -19,13 +19,13 @@ module.exports = {
         if (data.msg === "screenshot-saved" &&
             data.displayId === displayId && data.clientId === fakeClient.getClientId()) {
           request.head({ url: validateUrl, headers: { "If-Modified-Since": dateNow } }, (err, resp, body)=>{
-            if(err || resp.statusCode !== 200) {
-              log.debug("screenshot not found", body);
-              rej(err || resp.statusCode);
-            }
-            else if(resp.statusCode === 304) {
+            if(resp.statusCode === 304) {
               log.debug("Image not uploaded by this process");
               rej(resp.statusCode);
+            }
+            else if(err || resp.statusCode !== 200) {
+              log.debug("screenshot not found", body);
+              rej(err || resp.statusCode);
             }
             else {
               log.debug("screenshot saved");
@@ -44,7 +44,7 @@ module.exports = {
 
         request(screenshotUrl, (err, resp, body)=>{
           if(err || resp.statusCode !== 200) {
-            console.log("Screenshot request error", err || resp.statusCode, body);
+            log.debug("Screenshot request error", err || resp.statusCode, body);
             rej(err || resp.statusCode);
           }
         });
