@@ -1,36 +1,44 @@
 const Primus = require("primus");
-const serverUrl = "https://display-messaging.risevision.com:3001/?serverkey=" + process.env.SERVERKEY,
+const serverKey = process.env.SERVERKEY;
+const serverUrl = "https://display-messaging.risevision.com:3001/?serverkey=" + serverKey,
       clientUrl = "https://display-messaging.risevision.com:3000";
 
 module.exports = {
-  createClient(displayId, handler) {
+  serverKey,
+  serverUrl,
+  clientUrl,
+  createDisplay(displayId) {
     if (!displayId) {
       throw new Error("Missing Display ID");
     }
 
-    return createConnection(clientUrl, handler, displayId);
+    return createConnection(clientUrl, displayId);
   },
-  createServer(handler) {
-    return createConnection(serverUrl, handler);
+  createClient() {
+    return createConnection(serverUrl);
   }
 };
 
-function createConnection(url, handler, displayId) {
-  let connection;
+function createConnection(url, displayId) {
+  let connection, clientId;
 
   return {
-    connect() {
+    clientId,
+    connect(handler) {
       return new Promise((res)=>{
         const Socket = Primus.createSocket({
           transformer: "websockets",
           parser: "json"
         });
 
-        connection = new Socket(url);
+        connection = new Socket(url + displayId ? "&displayId=" + displayId : "");
 
         connection.on("data", (data)=>{
           if(handler) {
             handler(data);
+          }
+          else if(data.connection && !displayId) {
+            clientId = data.connection.id;
           }
         });
 
@@ -39,10 +47,6 @@ function createConnection(url, handler, displayId) {
         });
 
         connection.on("open", ()=>{
-          if(displayId) {
-            this.write({ msg: "register-display-id", displayId });
-          }
-
           res();
         });
 
