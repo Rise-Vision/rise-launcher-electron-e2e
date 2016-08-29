@@ -6,26 +6,30 @@ const path = require("path"),
 
 module.exports = {
   checkScreenshotSaved() {
-    var signedUrl = "https://storage.googleapis.com/risevision-display-screenshots/screenshot-request-e2e.jpg?GoogleAccessId=messaging-service-client@display-messaging-service.iam.gserviceaccount.com&Expires=2336138090&Signature=Q30bxAqA9RSg6Xnltqy5XuDSm1LLydTjLa0nfm845JO05ETTFUi9s54j%2ForX51ywrFP0NXoqWJuxUx50%2BYNXPwTSpV616GVpjyIo3bbVEwfw%2BnYEbOWMslI354WaiUWLtHdNnJhVS%2Fyura67CQzF%2B1o2Qnj6UtnxEEdz37SvwigZKvwLhu5EwwAB19fYu7X1Ci%2BEY%2Brd5sOBbsE5WWXuDVC%2FycAQLbtf2piz2PamVY%2FZAueh7pNC%2BjfXwsPk51EJbiUqS0ShP4EBVMslttflwQ5T3%2F2GWZEk6hoZz37NDVm%2FuWE28uwW93QRqgftIhcm3QLmW%2FfklXVi7nu9U388Ag%3D%3D";
-    var validateUrl = "http://storage.googleapis.com/risevision-display-screenshots/screenshot-request-e2e.jpg";
+    var signedUrl = process.env.E2E_SCREENSHOT_SIGNED_URL;
 
     log.debug("checking that the screenshot request is processed");
 
+    if(!signedUrl || signedUrl.indexOf("GoogleAccessId") === -1) {
+      throw new Error("E2E_SCREENSHOT_SIGNED_URL environment variable is not a valid signed url");
+    }
+
     return new Promise((res, rej)=>{
+      var validateUrl = signedUrl.substr(0, signedUrl.indexOf("?"));
       var fakeClient = messaging.createClient();
-      var dateNow = new Date().toUTCString();
+      var etag = "";
 
       fakeClient.connect((data)=>{
         if (data.msg === "screenshot-saved" &&
             data.displayId === displayId && data.clientId === fakeClient.getClientId()) {
-          request.head({ url: validateUrl, headers: { "If-Modified-Since": dateNow } }, (err, resp, body)=>{
-            if(resp.statusCode === 304) {
-              log.debug("Image not uploaded by this process");
-              rej(resp.statusCode);
-            }
-            else if(err || resp.statusCode !== 200) {
+          request.head({ url: validateUrl }, (err, resp, body)=>{
+            if(err || resp.statusCode !== 200) {
               log.debug("screenshot not found", body);
               rej(err || resp.statusCode);
+            }
+            else if(etag === resp.headers.etag) {
+              log.debug("screenshot not modified");
+              rej("screenshot not modified");
             }
             else {
               log.debug("screenshot saved");
@@ -37,6 +41,17 @@ module.exports = {
           log.debug("screenshot failed");
           rej();
         }
+      })
+      .then(()=>{
+        return new Promise((res)=>{
+          request.head({ url: validateUrl }, (err, resp)=>{
+            if(resp.statusCode === 200) {
+              etag = resp.headers.etag;
+            }
+
+            res();
+          });
+        });
       })
       .then(()=>{
         var screenshotParams = "&did=" + displayId + "&cid=" + fakeClient.getClientId() + "&url=" + encodeURIComponent(signedUrl),
