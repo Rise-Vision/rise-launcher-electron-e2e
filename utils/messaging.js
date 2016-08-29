@@ -1,5 +1,5 @@
 const Primus = require("primus");
-const serverKey = process.env.SERVERKEY;
+const serverKey = process.env.MESSAGING_SERVERKEY;
 const serverUrl = "https://display-messaging.risevision.com:3001/?sk=" + serverKey,
       clientUrl = "https://display-messaging.risevision.com:3000";
 
