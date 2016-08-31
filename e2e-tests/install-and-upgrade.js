@@ -35,9 +35,9 @@ module.exports = function*(version) {
 
   yield cacheCheck(this);
 
-  yield proxy.setupProxy();
-
   yield screenshotReq.checkScreenshotSaved(this);
+
+  yield proxy.setupProxy();
 
   installerStarter.startInstalledVersionAttended(version);
 
