@@ -17,7 +17,7 @@ module.exports = {
     return new Promise((res, rej)=>{
       var validateUrl = signedUrl.substr(0, signedUrl.indexOf("?"));
       var fakeClient = messaging.createClient();
-      var etag = "";
+      var lastModified = "";
 
       fakeClient.connect((data)=>{
         if (data.msg === "screenshot-saved" &&
@@ -27,7 +27,7 @@ module.exports = {
               log.debug("screenshot not found", body);
               rej(err || resp.statusCode);
             }
-            else if(etag === resp.headers.etag) {
+            else if(lastModified === resp.headers["last-modified"]) {
               log.debug("screenshot not modified");
               rej("screenshot not modified");
             }
@@ -46,7 +46,7 @@ module.exports = {
         return new Promise((res)=>{
           request.head({ url: validateUrl }, (err, resp)=>{
             if(resp.statusCode === 200) {
-              etag = resp.headers.etag;
+              lastModified = resp.headers["last-modified"];
             }
 
             res();
