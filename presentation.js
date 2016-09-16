@@ -7,9 +7,9 @@ md5Cmd = (os === "lnx" ? "md5sum screen.png" : "certUtil -hashfile screen.png MD
 screenshotCmd = (os === "lnx" ? "scrot screen.png" : "nircmd.exe savescreenshot screen.png"),
 cmdOpts = {cwd:__dirname, encoding: "utf8"};
 
-function checkScreen() {
+function checkScreen(logMessage) {
   var md5;
-  log.debug("taking screenshot");
+  log.debug(logMessage);
   execSync(screenshotCmd, cmdOpts);
   md5 = execSync(md5Cmd, cmdOpts);
   return expectedMd5.some((expected)=>{return md5.includes(expected);});
@@ -19,8 +19,17 @@ module.exports = {
   confirmPresentationVisibility(ctx) {
     return new Promise((res)=>{
       ctx.timeouts.presentation = setTimeout(()=>{
-        if (checkScreen()) {return res();}
-        res(module.exports.confirmPresentationVisibility(ctx));
+        if (checkScreen("taking screenshot")) {return res();}
+        return res(module.exports.confirmPresentationVisibility(ctx));
+      }, 5000);
+    });
+  },
+  confirmPresentationNotDefault(ctx) {
+    return new Promise((res)=>{
+      ctx.timeouts.presentation = setTimeout(()=>{
+        if (!checkScreen("taking screenshot of modified presentation")) {return res();}
+
+        return res(module.exports.confirmPresentationNotDefault(ctx));
       }, 5000);
     });
   }

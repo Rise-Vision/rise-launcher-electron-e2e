@@ -1,10 +1,10 @@
 var execSync = require("child_process").execSync,
 platform = require("rise-common-electron").platform,
 path = require("path"),
-os = process.platform === "linux" ? "lnx" : "win",
 fs = require("fs"),
 registry = require("./registry.js"),
 shortcuts = require("./shortcuts.js"),
+contentChange = require("./content-change.js"),
 idCfg = fs.readFileSync(path.join(__dirname, "displayid.txt")),
 killChrome = platform.isWindows() ? "taskkill /f /im chrome.exe" : "pkill -f chrome-linux",
 killInstaller = platform.isWindows() ? "taskkill /f /im installer.exe" : "pkill -f installer";
@@ -18,4 +18,5 @@ module.exports = function* cleanPreviousRun() {
   try {fs.mkdirSync(path.join(platform.getInstallDir("2016.2.4")));} catch(err) {}
   yield registry.resetDpiSettings();
   yield platform.writeTextFile(shortcuts.getAutostartPath(), "").catch((err)=>{log.debug(err);});
+  yield contentChange.restoreDefaultContent();
 };

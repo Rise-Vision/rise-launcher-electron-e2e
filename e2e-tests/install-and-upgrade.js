@@ -8,6 +8,7 @@ registry = require("../registry.js"),
 shortcuts = require("../shortcuts.js"),
 proxy = require("../proxy.js"),
 screenshotReq = require("../screenshot-request.js"),
+contentChange = require("../content-change.js"),
 installerStarter = require("../installer-starter.js");
 
 module.exports = function*(version) {
@@ -36,6 +37,8 @@ module.exports = function*(version) {
   yield cacheCheck(this);
 
   yield screenshotReq.checkScreenshotSaved(this);
+
+  yield contentChange.checkContentChanged(this);
 
   yield proxy.setupProxy();
 
