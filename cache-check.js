@@ -8,7 +8,7 @@ function pingCache() {
   .then((data)=>{
     return data.name === "rise-cache-v2";
   })
-  .catch((err)=>{return false;});
+  .catch(()=>{return false;});
 }
 
 module.exports = function cacheCheck(ctx) {
@@ -23,4 +23,4 @@ module.exports = function cacheCheck(ctx) {
       }, 5000);
     });
   });
-}
+};
