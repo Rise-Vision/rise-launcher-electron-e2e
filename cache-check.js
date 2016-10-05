@@ -1,12 +1,12 @@
 const network = require("rise-common-electron").network;
 
 function pingCache() {
-  return network.httpFetch("http://localhost:9494/ping?callback=cb")
+  return network.httpFetch("http://localhost:9494/")
   .then((resp)=>{
-    return resp.text();
+    return resp.json();
   })
-  .then((text)=>{
-    return (text === "cb();");
+  .then((data)=>{
+    return data.name === "rise-cache-v2";
   })
   .catch((err)=>{return false;});
 }
