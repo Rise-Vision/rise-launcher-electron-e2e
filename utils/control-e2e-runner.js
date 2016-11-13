@@ -3,8 +3,8 @@ path = require("path"),
 platform = require("rise-common-electron").platform;
 
 const scriptName = platform.isWindows() ? "startup.bat" : "startup.sh",
-scriptPath = path.join(platform.getUserDir(),
-                       "rise-launcher-electron-e2e",
+scriptPath = path.join(__dirname,
+                       "..",
                        scriptName);
 
 module.exports = {

@@ -6,6 +6,7 @@ test/test-results.xml
 *.jar
 external-deps/java-network-test/target/
 !*.exe
+/secret.txt
 /displayid.txt
 /expected-md5.txt
 /startup.sh

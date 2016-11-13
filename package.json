@@ -16,7 +16,7 @@
     "primus": "5.2.2",
     "raw-body": "^2.1.7",
     "request": "2.74.0",
-    "rise-common-electron": "git://github.com/Rise-Vision/rise-common-electron.git#a86a6c3d16cb945854e04025c21e96bcb3d7b12a",
+    "rise-common-electron": "git://github.com/Rise-Vision/rise-common-electron.git#fd46cd99a0f25c7765bc7f703986aec5a584aa0c",
     "windows-shortcuts": "git://github.com/Rise-Vision/windows-shortcuts.git",
     "winreg": "^1.0.1",
     "ws": "1.1.1",
