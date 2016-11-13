@@ -1,0 +1,4 @@
+taskkill /f /im node.exe
+taskkill /f /im installer.exe
+git pull
+node "%USERHOME%/rise-launcher-electron-e2e/main.js" -p3000 --debug

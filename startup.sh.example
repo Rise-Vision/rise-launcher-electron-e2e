@@ -1,4 +1,4 @@
 #!/bin/bash
 cd /home/rise/rise-launcher-electron-e2e && \
+git pull && \
 node main.js --debug --port=7786 >outfile 2>&1
-
