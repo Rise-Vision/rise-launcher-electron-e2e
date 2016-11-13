@@ -1,4 +1,5 @@
 const fs = require("fs"),
+launcherUtils = require("./utils/launcher-utils.js"),
 platform = require("rise-common-electron").platform;
 
 module.exports = {
@@ -7,7 +8,7 @@ module.exports = {
 
     function waitForProductionInstall() {
       try {
-        fs.statSync(platform.getInstallDir(stagedVersion));
+        fs.statSync(launcherUtils.getInstallDir(stagedVersion));
         log.debug("waiting for deletion of staged version after production version postinstall");
         return delayedRetry(waitForProductionInstall);
       } catch (err) {
@@ -26,7 +27,7 @@ module.exports = {
   },
   checkOldVersionDeleted(ctx) {
     log.debug("checking that old version was deleted");
-    const versionDir = platform.getInstallDir("2016.2.4");
+    const versionDir = launcherUtils.getInstallDir("2016.2.4");
     var oldVersionExists = true;
 
     try {

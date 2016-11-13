@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const ws = require("windows-shortcuts");
 const platform = require("rise-common-electron").platform;
+const launcherUtils = require("./utils/launcher-utils.js");
 const programsDirectory = platform.isWindows() ?
   path.join(process.env.APPDATA, "Microsoft", "Windows", "Start Menu", "Programs") :
   path.join(process.env.HOME, ".local", "share", "applications");
@@ -28,12 +29,6 @@ function checkScriptExists(script) {
 
 function escapeStringRegex(s) {
   return s.replace(/\./g, '\\.');
-}
-
-function getInstallDir(version) {
-  return platform.isWindows() ?
-    path.join(process.env["LOCALAPPDATA"], "rvplayer", version) :
-    path.join(process.env["HOME"], "rvplayer", version);
 }
 
 function checkWindowsShortcut(shortcut) {
@@ -72,7 +67,7 @@ function checkLinuxShortcut(shortcut) {
 }
 
 function checkShortcutList(version) {
-  const installDir = getInstallDir(version);
+  const installDir = launcherUtils.getInstallDir(version);
   const shortcuts = [
     {
       linux: {
@@ -126,7 +121,7 @@ function checkShortcutList(version) {
 }
 
 function checkScriptList(version) {
-  const installDir = getInstallDir(version);
+  const installDir = launcherUtils.getInstallDir(version);
 
   const scriptPaths = platform.isWindows() ?
     [

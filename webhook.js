@@ -1,5 +1,6 @@
 const route = require("koa-route"),
 koa = require("koa")(),
+bodyParser = require("koa-bodyparser"),
 argv = require('yargs')
   .alias('p', 'port')
   .argv;
@@ -21,6 +22,8 @@ function endRunCleanup(requestContext) {
   });
 }
 
+koa.use(bodyParser());
+
 koa.use(function* busy(next) {
   if (koa.context.isBusy) {return this.throw(503);}
 
@@ -39,7 +42,9 @@ koa.use(function* initialFailingStatus(next) {
   yield next;
 });
 
-koa.use(route.get("/install-and-upgrade/:version", require("./e2e-tests/install-and-upgrade.js")));
+koa.use(route.get("/install-and-upgrade/:version", require("./routes/install-and-upgrade.js")));
+
+koa.use(route.get("/upgrade-e2e-runner", require("./routes/upgrade-e2e-runner.js")));
 
 koa.use(function* (next) {
   endRunCleanup(this);
