@@ -8,3 +8,5 @@ external-deps/java-network-test/target/
 !*.exe
 /displayid.txt
 /expected-md5.txt
+/startup.sh
+/startup.bat
