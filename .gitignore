@@ -11,3 +11,4 @@ external-deps/java-network-test/target/
 /expected-md5.txt
 /startup.sh
 /startup.bat
+/outfile
