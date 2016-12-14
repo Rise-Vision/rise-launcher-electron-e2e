@@ -17,7 +17,7 @@ module.exports = {
   setupProxy() {
     try {execSync(killInstaller);} catch (err){}
     try {execSync(killChrome);} catch (err){}
-    fs.writeFileSync(platform.getDisplaySettingsPath(), "proxy=http://testhost:80");
+    fs.writeFileSync(launcherUtils.getDisplaySettingsPath(), "proxy=http://testhost:80");
 
     return platform.deleteRecursively(pacScriptPath);
   },
