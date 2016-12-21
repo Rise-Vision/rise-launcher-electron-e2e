@@ -1,0 +1,5 @@
+taskkill /f /im node.exe
+taskkill /f /im installer.exe
+cd %~dp0
+git pull
+node main.js -p3000 --debug
