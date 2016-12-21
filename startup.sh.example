@@ -2,6 +2,6 @@
 SCRIPT_DIR=$( cd "$(dirname "${BASH_SOURCE}")" ; pwd -P )
 
 cd "$SCRIPT_DIR" && \
-pkill node && \
+pkill node
 git pull && \
 node main.js --debug --port=7786 >outfile 2>&1
