@@ -1,4 +1,5 @@
 const path = require("path"),
+      inspect = require("util").inspect,
       fs = require("fs"),
       request = require("request"),
       messaging = require("./utils/messaging.js"),
@@ -20,6 +21,7 @@ module.exports = {
       var lastModified = "";
 
       fakeClient.connect((data)=>{
+        log.debug("message from Messaging Service to mock displays app\n" + inspect(data, {depth: 4}));
         if (data.msg === "screenshot-saved" &&
             data.displayId === displayId && data.clientId === fakeClient.getClientId()) {
           request.head({ url: validateUrl }, (err, resp, body)=>{
