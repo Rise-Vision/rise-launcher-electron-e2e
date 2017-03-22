@@ -62,7 +62,7 @@ koa.use(function* (next) {
 module.exports = {
   listen() {
     var port = argv.port || 9950;
-    koa.listen(port).timeout = 60 * 1000 * 5;
+    koa.listen(port).timeout = 60 * 1000 * 2;
     log.debug(`listening on ${port}`);
   }
 };

@@ -30,7 +30,7 @@ module.exports = {
               rej(err || resp.statusCode);
             }
             else if(lastModified === resp.headers["last-modified"]) {
-              log.debug("screenshot not modified");
+              log.debug("screenshot not modified - got " + lastModified);
               rej("screenshot not modified");
             }
             else {
@@ -46,11 +46,14 @@ module.exports = {
       })
       .then(()=>{
         return new Promise((res)=>{
+          log.debug("sending request for lastModified");
+          log.debug(validateUrl);
           request.head({ url: validateUrl }, (err, resp)=>{
             if(resp.statusCode === 200) {
               lastModified = resp.headers["last-modified"];
             }
 
+            log.debug("resolving request for lastModified - got " + lastModified);
             res();
           });
         });
@@ -59,10 +62,15 @@ module.exports = {
         var screenshotParams = "&did=" + displayId + "&cid=" + fakeClient.getClientId() + "&url=" + encodeURIComponent(signedUrl),
             screenshotUrl = messaging.serverUrl + screenshotParams + "&msg=screenshot";
 
+        log.debug("sending screenshot updated to messaging service");
+        log.debug(screenshotUrl);
+
         request(screenshotUrl, (err, resp, body)=>{
           if(err || resp.statusCode !== 200) {
             log.debug("Screenshot request error", err || resp.statusCode, body);
             rej(err || resp.statusCode);
+          } else {
+            log.debug("Screenshot request sent - fakeClient should receive it");
           }
         });
       });
