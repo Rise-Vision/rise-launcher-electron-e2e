@@ -60,6 +60,9 @@ function createConnection(url, displayId) {
         connection.open();
       });
     },
+    disconnect() {
+      connection.end();
+    },
     write(message) {
       return connection.write(message);
     }
