@@ -30,8 +30,10 @@ module.exports = {
     })
     .then(presentation.confirmPresentationNotDefault.bind(null, ctx))
     .then(module.exports.restoreDefaultContent)
+    .then(fakeClient.disconnect)
     .catch((err)=>{
       log.debug("Content changed validation failed " + require("util").inspect(err));
+      fakeClient.disconnect();
       return Promise.reject(err);
     });
   }

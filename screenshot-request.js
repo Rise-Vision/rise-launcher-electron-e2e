@@ -27,14 +27,17 @@ module.exports = {
           request.head({ url: validateUrl }, (err, resp, body)=>{
             if(err || resp.statusCode !== 200) {
               log.debug("screenshot not found", body);
+              fakeClient.disconnect();
               rej(err || resp.statusCode);
             }
             else if(lastModified === resp.headers["last-modified"]) {
               log.debug("screenshot not modified - got " + lastModified);
+              fakeClient.disconnect();
               rej("screenshot not modified");
             }
             else {
               log.debug("screenshot saved");
+              fakeClient.disconnect();
               res();
             }
           });
