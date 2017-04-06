@@ -31,7 +31,7 @@ function createConnection(url, displayId) {
           parser: "json"
         });
 
-        connection = new Socket(url + (displayId ? "&displayId=" + displayId : ""));
+        connection = new Socket(url + (displayId ? "&displayId=" + displayId : ""), {manual: true});
 
         connection.on("data", (data)=>{
           if(data.msg === "client-connected" && !displayId) {
@@ -53,7 +53,6 @@ function createConnection(url, displayId) {
             res();
           }
         });
-
 
         console.log("Opening connection");
 
