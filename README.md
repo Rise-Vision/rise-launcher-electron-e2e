@@ -2,13 +2,29 @@
 
 ### Set up
 
+1. Install gcloud 
+
+2. Add the following to login script
+
 ```bash
+export E2E_SCREENSHOT_SIGNED_URL=[signedurl]
+export MESSAGING_SERVERKEY=[serverkey]
+```
+
+3. Configure the rest of the secrets
+
+```bash
+gcould auth activate-service-account --key-file [keyfile]
 npm install
 echo -n [displayidtext] > displayid.txt
 echo -n [md5] > expected-md5.txt
 echo -n [secret] > secret.txt
 node main.js --debug --port=[port]  #optionally add a shortcut to autostart
 ```
+
+*signedurl*  a signed PUT url for the screenshot test `gsutil signurl ...`
+
+*keyfile* service account file for gsutil (e2e-testing-machine.json in private-keys)
 
 *displayidtext* contains the display id:  eg `"displayid=AAAAAAAA"`
 
