@@ -9,6 +9,7 @@ shortcuts = require("../shortcuts.js"),
 proxy = require("../proxy.js"),
 screenshotReq = require("../screenshot-request.js"),
 contentChange = require("../content-change.js"),
+argv = require('yargs').alias('p', 'port').argv,
 installerStarter = require("../installer-starter.js");
 
 module.exports = function*(version) {
@@ -56,7 +57,7 @@ module.exports = function*(version) {
 
   (function passed(ctx) {
     log.debug("Passed");
-    ctx.body = 200;
+    ctx.body = `200 OK PORT ${argv.port || 9950}`;
     ctx.status = 200;
     ctx.app.context.isBusy = false;
   }(this));
