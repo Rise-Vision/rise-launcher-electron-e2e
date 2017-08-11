@@ -12,6 +12,7 @@ function checkScreen(logMessage) {
   log.debug(logMessage);
   execSync(screenshotCmd, cmdOpts);
   md5 = execSync(md5Cmd, cmdOpts);
+  log.debug(md5);
   return expectedMd5.some((expected)=>{return md5.includes(expected);});
 }
 
