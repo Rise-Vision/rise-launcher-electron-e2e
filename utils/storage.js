@@ -7,10 +7,12 @@ module.exports = {
     return new Promise((res, rej)=>{
       var remoteFile = "gs://risevision-display-notifications/" + remoteFileName;
       var command = "gsutil cp " + localFileName + " " + remoteFile;
+      var metaCommand = `gsutil setmeta -h "cache-control:private, max-age=0" ${remoteFile}`;
 
       try {
         log.debug(command);
         execSync(command, cmdOpts);
+        execSync(metaCommand);
         res();
       }
       catch (err) {
