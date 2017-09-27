@@ -17,7 +17,6 @@ export MESSAGING_SERVERKEY=[serverkey]
 gcould auth activate-service-account --key-file [keyfile]
 npm install
 echo -n [displayidtext] > displayid.txt
-echo -n [md5] > expected-md5.txt
 echo -n [secret] > secret.txt
 node main.js --debug --port=[port]  #optionally add a shortcut to autostart
 ```
@@ -28,13 +27,12 @@ node main.js --debug --port=[port]  #optionally add a shortcut to autostart
 
 *displayidtext* contains the display id:  eg `"displayid=AAAAAAAA"`
 
-*md5* contains the expected md5 result of the display's presentation screenshot:  eg `"e1 db 21 c2 16 ea bf 6b 11 84 bd 8d 0a 3d d9 5d"`
-
 *secret* is the HMAC key used by the E2E runner to authenticate requests
 
-On Windows an md5 can be generated via `node screenshot-test.js`
+4. Create expected screenshot
+On Windows `node screenshot-test.js' then `copy screenshot.png expected-screenshot.png`
 
-On Linux `scrot -d 5` and `md5sum` can be used.
+On Linux `scrot -d 5` then `cp 2[tab] expected-screenshot.png`
 
 ### Test download, install, and upgrade using a specific version
 
