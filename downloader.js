@@ -5,7 +5,7 @@ fileSuffix = (os === "lnx" ? "sh" : "exe"),
 downloadedInstallerFileName = "installer." + fileSuffix,
 arch = process.arch === "x64" ? "64" : (process.arch === "arm" ? "armv7l" : "32"),
 baseUrl = "http://install-versions.risevision.com/",
-configFile = "electron-remote-components",
+configFile = "display-modules",
 http = require("http"),
 fs = require("fs");
 
@@ -44,7 +44,7 @@ module.exports = {
     .then((resp)=>{
       return resp.json();
     }).then((json)=>{
-      return json.InstallerElectronVersion;
+      return json.Modules.filter((mod)=>{return mod.Name === "Launcher";})[0].Version;
     });
   }
 };
