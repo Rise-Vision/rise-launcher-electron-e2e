@@ -44,7 +44,7 @@ module.exports = {
     .then((resp)=>{
       return resp.json();
     }).then((json)=>{
-      return json.Modules.filter((mod)=>{return mod.Name === "Launcher";})[0].Version;
+      return json.modules.filter((mod)=>{return mod.name === "launcher";})[0].version;
     });
   }
 };
