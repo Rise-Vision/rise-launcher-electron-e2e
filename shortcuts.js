@@ -121,21 +121,21 @@ function checkShortcutList(version) {
 }
 
 function checkScriptList(version) {
-  const installDir = launcherUtils.getInstallDir(version);
+  const installDir = launcherUtils.getInstallDir();
 
   const scriptPaths = platform.isWindows() ?
     [
-      path.join(installDir, "Installer", "scripts", "background.jse"),
-      path.join(installDir, "Installer", "scripts", "restart.bat"),
-      path.join(installDir, "Installer", "scripts", "start.bat"),
-      path.join(installDir, "Installer", "scripts", "stop.bat"),
-      path.join(installDir, "Installer", "scripts", "uninstall.bat")
+      path.join(installDir, "scripts", "background.jse"),
+      path.join(installDir, "scripts", "restart.bat"),
+      path.join(installDir, "scripts", "start.bat"),
+      path.join(installDir, "scripts", "stop.bat"),
+      path.join(installDir, "scripts", "uninstall.bat")
     ] : // End of Windows Script Paths
     [
-      path.join(installDir, "Installer", "scripts", "restart.sh"),
-      path.join(installDir, "Installer", "scripts", "start.sh"),
-      path.join(installDir, "Installer", "scripts", "stop.sh"),
-      path.join(installDir, "Installer", "scripts", "uninstall.sh")
+      path.join(installDir, "scripts", "restart.sh"),
+      path.join(installDir, "scripts", "start.sh"),
+      path.join(installDir, "scripts", "stop.sh"),
+      path.join(installDir, "scripts", "uninstall.sh")
     ];
 
     return Promise.all(scriptPaths.map(checkScriptExists));

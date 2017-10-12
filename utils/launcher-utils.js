@@ -3,7 +3,10 @@ const platform = require("rise-common-electron").platform;
 
 module.exports = {
   getInstallDir(version) {
-    return path.join(platform.getHomeDir(), "rvplayer", version || "");
+    let installDir = path.join(platform.getHomeDir(), "rvplayer");
+    if (!version) { return installDir; }
+
+    return path.join(installDir, "modules", "launcher", version);
   },
   getDisplaySettingsPath() {
     return path.join(module.exports.getInstallDir(), "RiseDisplayNetworkII.ini");
