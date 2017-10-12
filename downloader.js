@@ -7,6 +7,7 @@ arch = process.arch === "x64" ? "64" : (process.arch === "arm" ? "armv7l" : "32"
 baseUrl = "http://install-versions.risevision.com/",
 configFile = "display-modules",
 http = require("http"),
+https = require("https"),
 fs = require("fs");
 
 module.exports = {
@@ -14,10 +15,11 @@ module.exports = {
     const file = fs.createWriteStream(downloadedInstallerFileName);
 
     return new Promise((res, rej)=>{
-      let dest = manifest.modules.find(m=>m.name === "launcher").url;
+      const dest = manifest.modules.find(m=>m.name === "launcher").url;
+      const fn = dest.startsWith("https") ? https : http;
 
       log.debug(`downloading ${dest}`);
-      http.get(dest, (resp)=>{
+      fn.get(dest, (resp)=>{
         if (resp.headers.location) {
           return sendRequest(resp.headers.location);
         }
