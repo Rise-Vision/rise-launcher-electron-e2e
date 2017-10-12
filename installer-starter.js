@@ -1,8 +1,8 @@
 const downloader = require("./downloader.js"),
 launcherUtils = require("./utils/launcher-utils.js"),
 platform = require("rise-common-electron").platform,
-linuxExtractorOptions = ["--nox11", "--", "--unattended", "--rollout-pct=0", "--skip-countdown"],
-windowsExtractorOptions = ["--unattended", "--rollout-pct=0", "--skip-countdown"];
+linuxExtractorOptions = ["--nox11", "--", "--debug", "--unattended", "--rollout-pct=0", "--skip-countdown"],
+windowsExtractorOptions = ["--unattended", "--debug", "--rollout-pct=0", "--skip-countdown"];
 
 module.exports = {
   startDownloadedInstaller() {
