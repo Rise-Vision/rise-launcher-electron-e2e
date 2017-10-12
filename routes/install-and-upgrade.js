@@ -1,4 +1,5 @@
 const downloader = require("../downloader.js"),
+{join: pathJoin} = require("path"),
 versioning = require("../versioning.js"),
 cleanPrevious = require("../clean-previous.js"),
 presentation = require("../presentation.js"),
@@ -35,7 +36,9 @@ module.exports = function*(version) {
 
   yield platform.setFilePermissions(downloader.getDownloadedInstallerFilePath(), 0755);
 
-  installerStarter.startDownloadedInstaller();
+  yield manifest.saveOverridesTo(pathJoin(platform.getHomeDir(), "rvplayer"));
+
+  installerStarter.startDownloadedInstaller(manifest.overridesFilename());
 
   yield presentation.confirmPresentationVisibility(this);
 

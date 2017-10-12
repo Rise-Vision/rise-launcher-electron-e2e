@@ -5,9 +5,14 @@ linuxExtractorOptions = ["--nox11", "--", "--debug", "--unattended", "--rollout-
 windowsExtractorOptions = ["--unattended", "--debug", "--rollout-pct=0", "--skip-countdown"];
 
 module.exports = {
-  startDownloadedInstaller() {
+  startDownloadedInstaller(manifestOverrideFilename) {
     var downloadedFilePath = downloader.getDownloadedInstallerFilePath(),
     extractorOptions = platform.isWindows() ? windowsExtractorOptions : linuxExtractorOptions;
+
+    if (manifestOverrideFilename) {
+      let overrideOption = `--remote-manifest-override=${manifestOverrideFilename}`;
+      extractorOptions = extractorOptions.concat(overrideOption);
+    }
 
     log.debug("starting downloaded installer");
     platform.startProcess(downloadedFilePath, extractorOptions, 9);
