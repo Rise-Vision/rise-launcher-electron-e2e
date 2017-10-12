@@ -21,7 +21,8 @@ module.exports = {
   },
   *saveOverridesTo(pathDir) {
     let fullPath = pathJoin(pathDir, overridesFilename);
-    return platform.writeTextFile(fullPath, overrides);
+    const jsonString = JSON.stringify(module.exports.withOverrides(), null, 2);
+    return platform.writeTextFile(fullPath, jsonString);
   },
   overridesFilename() {
     return overridesFilename;
