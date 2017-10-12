@@ -14,7 +14,7 @@ module.exports = {
       extractorOptions = extractorOptions.concat(overrideOption);
     }
 
-    log.debug("starting downloaded installer");
+    log.debug(`starting downloaded installer ${downloadedFilePath} with ${extractorOptions.join(" ")}`);
     platform.startProcess(downloadedFilePath, extractorOptions, 9);
   },
   startInstalledVersionForUpgrade(version) {
