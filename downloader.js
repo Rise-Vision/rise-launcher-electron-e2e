@@ -10,41 +10,37 @@ http = require("http"),
 fs = require("fs");
 
 module.exports = {
-  downloadInstaller(version) {
+  downloadInstaller(manifest) {
     const file = fs.createWriteStream(downloadedInstallerFileName);
 
     return new Promise((res, rej)=>{
-      sendRequest(`${baseUrl}staging/${version}/installer-${os}-${arch}.${fileSuffix}`);
+      let dest = manifest.modules.find(m=>m.name === "launcher").url;
 
-      function sendRequest(dest) {
-        log.debug(`downloading ${dest}`);
-        http.get(dest, (resp)=>{
-          if (resp.headers.location) {
-            return sendRequest(resp.headers.location);
-          }
+      log.debug(`downloading ${dest}`);
+      http.get(dest, (resp)=>{
+        if (resp.headers.location) {
+          return sendRequest(resp.headers.location);
+        }
 
-          if (resp.statusCode < 200 || resp.statusCode > 299) {
-            return rej(resp.statusCode);
-          }
+        if (resp.statusCode < 200 || resp.statusCode > 299) {
+          return rej(resp.statusCode);
+        }
 
-          resp.pipe(file)
-          .on("close", ()=>{
-            res();
-          })
-          .on("error", (err)=>{console.dir(err); rej(err);});
-        });
-      }
+        resp.pipe(file)
+        .on("close", ()=>{
+          res();
+        })
+        .on("error", (err)=>{console.dir(err); rej(err);});
+      });
     });
   },
   getDownloadedInstallerFilePath() {
     return path.join(__dirname, downloadedInstallerFileName);
   },
-  getProductionVersionNumber() {
+  getRemoteManifest() {
     return network.httpFetch(`${baseUrl}${configFile}-${os}-${arch}.json`)
     .then((resp)=>{
       return resp.json();
-    }).then((json)=>{
-      return json.modules.filter((mod)=>{return mod.name.toLowerCase() === "launcher";})[0].version;
     });
   }
 };
