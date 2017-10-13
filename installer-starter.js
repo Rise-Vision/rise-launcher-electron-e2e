@@ -3,8 +3,8 @@ path = require("path"),
 launcherUtils = require("./utils/launcher-utils.js"),
 platform = require("rise-common-electron").platform,
 cp = require("child_process"),
-linuxExtractorOptions = ["--nox11", "--", "--unattended", "--debug", "--rollout-pct=0", "--skip-countdown"],
-windowsExtractorOptions = ["--unattended", "--debug", "--rollout-pct=0", "--skip-countdown"];
+linuxExtractorOptions = ["--nox11", "--", "--unattended", "--debug", "--rollout-pct=0", "--override-limiter", "--skip-countdown"],
+windowsExtractorOptions = ["--unattended", "--debug", "--rollout-pct=0", "--skip-countdown", "--override-limiter"];
 
 module.exports = {
   startDownloadedInstaller(manifestOverrideFilename) {
