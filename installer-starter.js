@@ -21,7 +21,7 @@ module.exports = {
   },
   startInstalledVersionForUpgrade(version) {
     log.debug("starting installed installer");
-    spawn(launcherUtils.getInstallerPath(version), ["--unattended", "--rollout-pct=100", "--skip-countdown"]);
+    spawn(launcherUtils.getInstallerPath(version), ["--unattended", "--override-limiter", "--rollout-pct=100", "--skip-countdown", "--debug"]);
   },
   startInstalledVersionAttended(version) {
     log.debug("starting installed installer attended");
