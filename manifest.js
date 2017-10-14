@@ -8,8 +8,6 @@ let remoteManifest;
 
 module.exports = {
   *setOverrides(json) {
-    if (overrides) {throw Error("overrides already set");}
-
     overrides = Object.assign({}, json);
     yield downloader.getRemoteManifest().then(res=>(remoteManifest = res));
   },
