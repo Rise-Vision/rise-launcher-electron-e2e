@@ -28,7 +28,9 @@ koa.use(function* readBody(next) {
   this.request.rawBody = yield raw(inflate(this.req), "utf-8");
   try {
     this.request.jsonBody = JSON.parse(this.request.rawBody);
-  } catch(e) {}
+  } catch(e) {
+    log.error(e);
+  }
   yield next
 });
 
@@ -51,6 +53,7 @@ koa.use(function* initialFailingStatus(next) {
 });
 
 koa.use(route.get("/install-and-upgrade/:version", require("./routes/install-and-upgrade.js")));
+koa.use(route.post("/install-and-upgrade/", require("./routes/install-and-upgrade.js")));
 
 koa.use(route.post("/upgrade-e2e-runner/", require("./routes/upgrade-e2e-runner.js")));
 

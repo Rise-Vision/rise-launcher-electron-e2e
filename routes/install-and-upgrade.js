@@ -1,4 +1,5 @@
 const downloader = require("../downloader.js"),
+{join: pathJoin} = require("path"),
 versioning = require("../versioning.js"),
 cleanPrevious = require("../clean-previous.js"),
 presentation = require("../presentation.js"),
@@ -11,19 +12,33 @@ screenshotReq = require("../screenshot-request.js"),
 contentChange = require("../content-change.js"),
 argv = require('yargs').alias('p', 'port').argv,
 installerStarter = require("../installer-starter.js");
+manifest = require("../manifest.js");
 
 module.exports = function*(version) {
-  log.debug(`Using bundle version ${version}`);
+  if (!this.request.method === "POST") {
+    log.debug(`Using bundle version ${version}`);
+  } else {
+    let jsonString = JSON.stringify(this.request.jsonBody, null, 2);
+    log.debug(`Using remote manifest overrides: ${jsonString} `);
+    yield manifest.setOverrides(this.request.jsonBody);
+
+    version = manifest.withOverrides()
+    .modules.find(m=>m.name === "launcher").version;
+  }
+
   yield cleanPrevious;
 
-  yield downloader.downloadInstaller(version).catch((err)=>{
+  yield downloader.downloadInstaller(manifest.withOverrides())
+  .catch((err)=>{
     log.debug("download error " + require("util").inspect(err));
     this.throw(500);
   });
 
   yield platform.setFilePermissions(downloader.getDownloadedInstallerFilePath(), 0755);
 
-  installerStarter.startDownloadedInstaller();
+  yield manifest.saveOverridesTo(pathJoin(platform.getHomeDir(), "rvplayer"));
+
+  installerStarter.startDownloadedInstaller(manifest.overridesFilename());
 
   yield presentation.confirmPresentationVisibility(this);
 

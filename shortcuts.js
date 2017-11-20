@@ -1,4 +1,4 @@
-const fs = require("fs");
+const {statSync, readFileSync} = require("fs");
 const path = require("path");
 const ws = require("windows-shortcuts");
 const platform = require("rise-common-electron").platform;
@@ -20,7 +20,7 @@ function checkShortcut(shortcut) {
 
 function checkScriptExists(script) {
   try {
-    fs.statSync(script);
+    statSync(script);
     return Promise.resolve();
   } catch (e) {
     return Promise.reject();
@@ -54,7 +54,7 @@ function checkLinuxShortcut(shortcut) {
   const targetRegex = RegExp(`\\n\\s*Exec=${escapeStringRegex(shortcut.target)}`);
   return new Promise((res, rej) => {
     try {
-      fileContents = fs.readFileSync(shortcut.location, 'utf8');
+      fileContents = readFileSync(shortcut.location, 'utf8');
       if (nameRegex.test(fileContents) && targetRegex.test(fileContents)) {
         res();
       } else {
@@ -66,18 +66,18 @@ function checkLinuxShortcut(shortcut) {
   });
 }
 
-function checkShortcutList(version) {
-  const installDir = launcherUtils.getInstallDir(version);
+function checkShortcutList() {
+  const installDir = launcherUtils.getInstallDir();
   const shortcuts = [
     {
       linux: {
         location: path.join(programsDirectory, "rvplayer-start.desktop"),
         name: "Start Rise Vision Player",
-        target: path.join(installDir, "Installer", "scripts", "start.sh --unattended")
+        target: path.join(installDir, "scripts", "start.sh --unattended")
       },
       windows: {
         location: path.join(programsDirectory, "Rise Vision", "Start Rise Vision Player.lnk"),
-        target: path.join(installDir, "Installer", "scripts", "background.jse"),
+        target: path.join(installDir, "scripts", "background.jse"),
         args: "start.bat --unattended"
       }
     },
@@ -85,11 +85,11 @@ function checkShortcutList(version) {
       linux: {
         location: path.join(programsDirectory, "rvplayer-stop.desktop"),
         name: "Stop Rise Vision Player",
-        target: path.join(installDir, "Installer", "scripts", "stop.sh")
+        target: path.join(installDir, "scripts", "stop.sh")
       },
       windows: {
         location: path.join(programsDirectory, "Rise Vision", "Stop Rise Vision Player.lnk"),
-        target: path.join(installDir, "Installer", "scripts", "background.jse"),
+        target: path.join(installDir, "scripts", "background.jse"),
         args: "stop.bat"
       }
     },
@@ -97,22 +97,22 @@ function checkShortcutList(version) {
       linux: {
         location: path.join(programsDirectory, "rvplayer-uninstall.desktop"),
         name: "Uninstall Rise Vision Player",
-        target: path.join(installDir, "Installer", "scripts", "uninstall.sh")
+        target: path.join(installDir, "scripts", "uninstall.sh")
       },
       windows: {
         location: path.join(programsDirectory, "Rise Vision", "Uninstall Rise Vision Player.lnk"),
-        target: path.join(installDir, "Installer", "scripts", "uninstall.bat")
+        target: path.join(installDir, "scripts", "uninstall.bat")
       }
     },
     {
       linux: {
         location: autostartPath,
         name: "Rise Vision Player",
-        target: `bash -c '${path.join(installDir, "Installer", "scripts", "start.sh --unattended")}'`
+        target: `bash -c '${path.join(installDir, "scripts", "start.sh --unattended")}'`
       },
       windows: {
         location: autostartPath,
-        target: path.join(installDir, "Installer", "scripts", "background.jse"),
+        target: path.join(installDir, "scripts", "background.jse"),
         args: "start.bat --unattended"
       }
     }
@@ -120,25 +120,46 @@ function checkShortcutList(version) {
   return Promise.all(shortcuts.map(checkShortcut));
 }
 
-function checkScriptList(version) {
-  const installDir = launcherUtils.getInstallDir(version);
-
-  const scriptPaths = platform.isWindows() ?
+function getScriptList() {
+  return platform.isWindows() ?
     [
-      path.join(installDir, "Installer", "scripts", "background.jse"),
-      path.join(installDir, "Installer", "scripts", "restart.bat"),
-      path.join(installDir, "Installer", "scripts", "start.bat"),
-      path.join(installDir, "Installer", "scripts", "stop.bat"),
-      path.join(installDir, "Installer", "scripts", "uninstall.bat")
-    ] : // End of Windows Script Paths
+       "background.jse",
+       "restart.bat",
+       "start.bat",
+       "stop.bat",
+       "uninstall.bat"
+    ] :
     [
-      path.join(installDir, "Installer", "scripts", "restart.sh"),
-      path.join(installDir, "Installer", "scripts", "start.sh"),
-      path.join(installDir, "Installer", "scripts", "stop.sh"),
-      path.join(installDir, "Installer", "scripts", "uninstall.sh")
+       "restart.sh",
+       "start.sh",
+       "stop.sh",
+       "uninstall.sh"
     ];
+}
 
-    return Promise.all(scriptPaths.map(checkScriptExists));
+function checkScriptList() {
+  const installDir = launcherUtils.getInstallDir();
+  const scripts = getScriptList();
+  const paths = scripts.map(script=>path.join(installDir, "scripts", script));
+
+  return Promise.all(paths.map(checkScriptExists));
+}
+
+function checkScriptContents(version) {
+  const moduleDir = launcherUtils.getInstallDir(version);
+  const installDir = launcherUtils.getInstallDir();
+  const scripts = getScriptList();
+  const paths = scripts.map(script=>{
+    return [
+      path.join(installDir, "scripts", script),
+      path.join(moduleDir, "Installer", "scripts", script)
+    ];
+  });
+
+  return Promise.all(paths.map(pair=>{
+    return readFileSync(pair[0], "utf8") === readFileSync(pair[1], "utf8") ?
+      Promise.resolve() : Promise.reject();
+  }));
 }
 
 module.exports = {
@@ -150,7 +171,8 @@ module.exports = {
     return new Promise((res) => {
       function curriedCheckScriptsExist() {
         log.debug("Checking scripts");
-        checkScriptList(version)
+        checkScriptList()
+        .then(()=>checkScriptContents(version))
           .then(res)
           .catch(() => {
             log.debug("Script check failed");
@@ -166,7 +188,7 @@ module.exports = {
     return new Promise((res) => {
       function curriedCheckShortcutsNameAndTarget() {
         log.debug("Checking shortcuts");
-        checkShortcutList(version)
+        checkShortcutList()
           .then(res)
           .catch(() => {
             log.debug("Shortcut check failed");
