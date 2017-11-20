@@ -1,21 +1,14 @@
 const Primus = require("primus");
 const serverKey = process.env.MESSAGING_SERVERKEY;
-const serverUrl = "https://display-messaging.risevision.com:3001/?sk=" + serverKey,
-      clientUrl = "https://display-messaging.risevision.com:3000";
+const serverUrl = "https://services.risevision.com/messaging/core?sk=" + serverKey,
+      clientUrl = "https://services.risevision.com/messaging/primus?machineId=12345";
 
 module.exports = {
   serverKey,
   serverUrl,
   clientUrl,
-  createDisplay(displayId) {
-    if (!displayId) {
-      throw new Error("Missing Display ID");
-    }
-
+  createClient(displayId = Math.random()) {
     return createConnection(clientUrl, displayId);
-  },
-  createClient() {
-    return createConnection(clientUrl);
   }
 };
 
@@ -28,13 +21,15 @@ function createConnection(url, displayId) {
       return new Promise((res)=>{
         const Socket = Primus.createSocket({
           transformer: "websockets",
+          pathname: "messaging/primus",
           parser: "json"
         });
 
-        connection = new Socket(url + (displayId ? "&displayId=" + displayId : ""), {manual: true});
+        connection = new Socket(`${url}&displayId=${displayId}`, {manual: true});
 
         connection.on("data", (data)=>{
-          if(data.msg === "client-connected" && !displayId) {
+          console.dir(data);
+          if(data.msg === "client-connected") {
             clientId = data.clientId;
             res();
           }
@@ -45,14 +40,18 @@ function createConnection(url, displayId) {
         });
 
         connection.on("error", (error)=>{
+          console.dir(error);
           log.external("Received a messaging error", error.stack);
         });
 
         connection.on("open", ()=>{
-          if(displayId) {
+          console.log("Connection opened");
+          if(displayId !== "apps") {
             res();
           }
         });
+
+        connection.on("close", ()=>{console.log("Connection closed");});
 
         console.log("Opening connection");
 
