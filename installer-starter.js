@@ -34,7 +34,7 @@ function spawn(cmd, args = []) {
     const child = cp.spawn(cmd, args, {
       cwd: path.dirname(cmd),
       stdio: "inherit",
-      detached: "true"
+      detached: true
     });
     child.on("error", log.debug);
   } catch(e) {

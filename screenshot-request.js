@@ -17,13 +17,12 @@ module.exports = {
 
     return new Promise((res, rej)=>{
       var validateUrl = signedUrl.substr(0, signedUrl.indexOf("?"));
-      var fakeClient = messaging.createClient();
+      var fakeClient = messaging.createClient("apps");
       var lastModified = "";
 
       fakeClient.connect((data)=>{
         log.debug("message from Messaging Service to mock displays app\n" + inspect(data, {depth: 4}));
-        if (data.msg === "screenshot-saved" &&
-            data.displayId === displayId && data.clientId === fakeClient.getClientId()) {
+        if (data.msg === "screenshot-saved" && data.clientId === fakeClient.getClientId()) {
           request.head({ url: validateUrl }, (err, resp, body)=>{
             if(err || resp.statusCode !== 200) {
               log.debug("screenshot not found", body);
@@ -34,15 +33,13 @@ module.exports = {
               log.debug("screenshot not modified - got " + lastModified);
               fakeClient.disconnect();
               rej("screenshot not modified");
-            }
-            else {
+            } else {
               log.debug("screenshot saved");
               fakeClient.disconnect();
               res();
             }
           });
-        }
-        else if(data.msg === "screenshot-failed") {
+        } else if(data.msg === "screenshot-failed") {
           log.debug("screenshot failed");
           rej();
         }
@@ -65,7 +62,7 @@ module.exports = {
         var screenshotParams = "&did=" + displayId + "&cid=" + fakeClient.getClientId() + "&url=" + encodeURIComponent(signedUrl),
             screenshotUrl = messaging.serverUrl + screenshotParams + "&msg=screenshot";
 
-        log.debug("sending screenshot updated to messaging service");
+        log.debug("sending screenshot request to messaging service");
         log.debug(screenshotUrl);
 
         request(screenshotUrl, (err, resp, body)=>{
@@ -73,7 +70,7 @@ module.exports = {
             log.debug("Screenshot request error", err || resp.statusCode, body);
             rej(err || resp.statusCode);
           } else {
-            log.debug("Screenshot request sent - fakeClient should receive it");
+            log.debug("Screenshot request sent - fakeClient should receive update from player");
           }
         });
       });
