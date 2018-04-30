@@ -9,6 +9,7 @@ configFile = "display-modules",
 http = require("http"),
 https = require("https"),
 fs = require("fs");
+expectedScreenshotFile = "expected-screenshot.";
 
 module.exports = {
   downloadInstaller(manifest) {
@@ -44,5 +45,29 @@ module.exports = {
     .then((resp)=>{
       return resp.json();
     });
+  },
+  getExpectedScreenshot(screenshotUrl, format = "png") {
+    const file = fs.createWriteStream(expectedScreenshotFile+format);
+    
+    return new Promise((res, rej)=>{
+      const fn = screenshotUrl.startsWith("https") ? https : http;
+
+      log.debug(`downloading ${screenshotUrl}`);
+      fn.get(screenshotUrl, (resp)=>{
+        if (resp.headers.location) {
+          return sendRequest(resp.headers.location);
+        }
+
+        if (resp.statusCode < 200 || resp.statusCode > 299) {
+          return rej(resp.statusCode);
+        }
+
+        resp.pipe(file)
+        .on("close", ()=>{
+          res();
+        })
+        .on("error", (err)=>{console.dir(err); rej(err);});
+      });
+    }); 
   }
 };
