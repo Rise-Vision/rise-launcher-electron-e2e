@@ -2,31 +2,39 @@ var execSync = require("child_process").execSync,
 resemble = require("node-resemble-js"),
 fs = require("fs"),
 os = process.platform === "linux" ? "lnx" : "win",
-screenshotCmd = (os === "lnx" ? "scrot screenshot.png" : "nircmd.exe savescreenshot screenshot.png"),
 cmdOpts = {cwd:__dirname, encoding: "utf8"};
 
-function checkScreen(logMessage) {
+function checkScreen(logMessage, imageFormat) {
   return new Promise((res, rej)=>{
     log.debug(logMessage);
-    execSync(screenshotCmd, cmdOpts);
-    resemble("expected-screenshot.png").compareTo("screenshot.png")
+    execSync(getScreenshotCmd(imageFormat), cmdOpts);
+    resemble(`expected-screenshot.${imageFormat}`).compareTo(`screenshot.${imageFormat}`)
     .ignoreAntialiasing()
     .onComplete(data=>{
       log.debug(data);
-      data.getDiffImage().pack().pipe(fs.createWriteStream("diff.png"));
+      data.getDiffImage().pack().pipe(fs.createWriteStream(`diff.${imageFormat}`));
       return data.misMatchPercentage >= 1 ? rej() : res();
     });
   });
 }
 
+function getScreenshotCmd(imageFormat) {
+  return (os === "lnx" ? `scrot screenshot.${imageFormat}` : `nircmd.exe savescreenshot screenshot.${imageFormat}`);
+}
+
 module.exports = {
-  confirmPresentationVisibility(ctx) {
-    return new Promise((res)=>{
+  confirmPresentationVisibility(ctx, imageFormat, numberOfAttempts) {
+    return new Promise((res, rej)=>{
       ctx.timeouts.presentation = setTimeout(()=>{
-        return checkScreen("taking screenshot")
+        return checkScreen("taking screenshot", imageFormat)
         .then(res)
         .catch(()=>{
-          return res(module.exports.confirmPresentationVisibility(ctx));
+          if(numberOfAttempts === 0){
+            return rej();
+          } else {
+            if(numberOfAttempts) numberOfAttempts--;
+            return res(module.exports.confirmPresentationVisibility(ctx, imageFormat, numberOfAttempts));
+          }
         });
       }, 5000);
     });
