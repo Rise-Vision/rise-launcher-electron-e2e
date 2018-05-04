@@ -23,7 +23,7 @@ function getScreenshotCmd(imageFormat) {
 }
 
 module.exports = {
-  confirmPresentationVisibility(ctx, imageFormat, numberOfAttempts) {
+  confirmPresentationVisibility(ctx, imageFormat = "png", numberOfAttempts) {
     return new Promise((res, rej)=>{
       ctx.timeouts.presentation = setTimeout(()=>{
         return checkScreen("taking screenshot", imageFormat)
