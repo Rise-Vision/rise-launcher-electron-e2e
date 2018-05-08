@@ -1,6 +1,7 @@
 global.log = console;
 const displayId = process.argv[2];
 const presentationScreenshotUrl = process.argv[3];
+const numberOfPrints = process.argv[4];
 
 const downloader = require("./downloader.js");
 const presentation = require("./presentation.js");
@@ -21,7 +22,7 @@ const testDisplay = function () {
             // I had to add this timeout because it could not execute the installer right after it sets the permissions
             setTimeout(()=>{
               installerStarter.startDownloadedInstaller();
-              presentation.confirmPresentationVisibility(ctx, "jpg", 10)
+              presentation.confirmPresentationVisibility(ctx, "jpg", numberOfPrints)
               .then(()=>{
                 console.log("Success")
                 process.exit();
