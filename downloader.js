@@ -5,7 +5,9 @@ fileSuffix = (os === "lnx" ? "sh" : "exe"),
 downloadedInstallerFileName = "installer." + fileSuffix,
 arch = process.arch === "x64" ? "64" : (process.arch === "arm" ? "arm" : "32"),
 baseUrl = "http://install-versions.risevision.com/",
+baseUrlBeta = `${baseUrl}beta/`,
 configFile = "display-modules",
+configFileBeta = `${configFile}-beta`,
 http = require("http"),
 https = require("https"),
 fs = require("fs");
@@ -46,9 +48,15 @@ module.exports = {
       return resp.json();
     });
   },
+  getRemoteBetaManifest() {
+    return network.httpFetch(`${baseUrlBeta}${configFileBeta}-${os}-${arch}.json`)
+    .then((resp)=>{
+      return resp.json();
+    });
+  },
   getExpectedScreenshot(screenshotUrl, format = "png") {
     const file = fs.createWriteStream(expectedScreenshotFile+format);
-    
+
     return new Promise((res, rej)=>{
       const fn = screenshotUrl.startsWith("https") ? https : http;
 
@@ -68,6 +76,6 @@ module.exports = {
         })
         .on("error", (err)=>{console.dir(err); rej(err);});
       });
-    }); 
+    });
   }
 };

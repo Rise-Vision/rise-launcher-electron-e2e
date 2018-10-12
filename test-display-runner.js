@@ -2,17 +2,23 @@ global.log = console;
 const displayId = process.argv[2];
 const presentationScreenshotUrl = process.argv[3];
 const numberOfPrints = process.argv[4];
+const rolloutEnvironment = process.argv[5] || "stable";
 
 const downloader = require("./downloader.js");
 const presentation = require("./presentation.js");
 const platform = require("rise-common-electron").platform;
 const installerStarter = require("./installer-starter.js");
 
+const getManifest = function () {
+  return rolloutEnvironment === "beta" ?
+    downloader.getRemoteBetaManifest() : downloader.getRemoteManifest();
+}
+
 const testDisplay = function () {
   const ctx = {timeouts: {presentation: null}};
   console.log(`Arguments: ${displayId} ${presentationScreenshotUrl}`);
   let remoteManifest = "";
-  downloader.getRemoteManifest()
+  getManifest()
   .then((res)=>{
     remoteManifest = res;
     downloader.downloadInstaller(remoteManifest)
@@ -26,7 +32,7 @@ const testDisplay = function () {
               .then(()=>{
                 console.log("Success")
                 process.exit();
-              }) 
+              })
               .catch((err)=>{
                 console.log("Test error");
                 process.exit(1);
@@ -40,4 +46,3 @@ const testDisplay = function () {
   });
 }
 testDisplay();
-
