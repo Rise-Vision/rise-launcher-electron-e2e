@@ -10,7 +10,7 @@ const testDisplay = function () {
   console.log(`Argument: ${displayId}`);
 
   Promise.resolve().then(()=>{
-    installerStarter.startDownloadedInstaller();
+    installerStarter.startDownloadedInstaller("overriden.json");
     presentation.confirmPresentationVisibility(ctx, "jpg", numberOfPrints)
     .then(()=>{
       console.log("Success")
