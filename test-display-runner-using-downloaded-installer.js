@@ -15,7 +15,7 @@ const preparePlayerModule = function () {
   if (!fs.existsSync(playerModulePath)) {
     fs.mkdirSync(playerModulePath);
   }
-  const compatFilePath = path.join(launcherUtils.getInstallDir(), "modules", "player-electron", "electron-compat.txt");
+  const compatFilePath = path.join(playerModulePath, "electron-compat.txt");
   return platform.writeTextFile(compatFilePath, "v1\nv2\nv3\nv4\n");
 }
 
