@@ -2,16 +2,28 @@ global.log = console;
 const displayId = process.argv[2];
 const numberOfPrints = process.argv[3];
 
+const platform = require("rise-common-electron").platform;
+const path = require("path");
+const fs = require("fs");
+
+const launcherUtils = require("./utils/launcher-utils.js");
 const presentation = require("./presentation");
 const installerStarter = require("./installer-starter");
 
+const preparePlayerModule = function () {
+  try {fs.mkdirSync(path.join(launcherUtils.getInstallDir(), "modules", "player-electron"));} catch(err) {};
+  const compatFilePath = path.join(launcherUtils.getInstallDir(), "modules", "player-electron", "electron-compat.txt");
+  return platform.writeTextFile(compatFilePath, "v1\nv2\nv3\nv4\n");
+}
+
 const testDisplay = function () {
   const ctx = {timeouts: {presentation: null}};
-  console.log(`Argument: ${displayId}`);
+  console.log(`Arguments: ${displayId} ${numberOfPrints}`);
 
-  Promise.resolve().then(()=>{
-    installerStarter.startDownloadedInstaller();
-    presentation.confirmPresentationVisibility(ctx, "jpg", numberOfPrints)
+  preparePlayerModule()
+    .then(()=>{
+      installerStarter.startDownloadedInstaller();
+      presentation.confirmPresentationVisibility(ctx, "jpg", numberOfPrints)
     .then(()=>{
       console.log("Success")
       process.exit();
