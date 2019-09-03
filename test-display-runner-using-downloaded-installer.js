@@ -13,7 +13,7 @@ const installerStarter = require("./installer-starter");
 const preparePlayerModule = function () {
   const playerModulePath = path.join(launcherUtils.getInstallDir(), "modules", "player-electron");
   if (!fs.existsSync(playerModulePath)) {
-    fs.mkdirSync(playerModulePath);
+    fs.mkdirSync(playerModulePath, { recursive: true });
   }
   const compatFilePath = path.join(playerModulePath, "electron-compat.txt");
   return platform.writeTextFile(compatFilePath, "v1\nv2\nv3\nv4\n");
