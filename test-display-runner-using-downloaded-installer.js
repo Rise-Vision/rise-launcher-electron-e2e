@@ -11,7 +11,10 @@ const presentation = require("./presentation");
 const installerStarter = require("./installer-starter");
 
 const preparePlayerModule = function () {
-  try {fs.mkdirSync(path.join(launcherUtils.getInstallDir(), "modules", "player-electron"));} catch(err) {};
+  const playerModulePath = path.join(launcherUtils.getInstallDir(), "modules", "player-electron");
+  if (!fs.existsSync(playerModulePath)) {
+    fs.mkdirSync(playerModulePath);
+  }
   const compatFilePath = path.join(launcherUtils.getInstallDir(), "modules", "player-electron", "electron-compat.txt");
   return platform.writeTextFile(compatFilePath, "v1\nv2\nv3\nv4\n");
 }
