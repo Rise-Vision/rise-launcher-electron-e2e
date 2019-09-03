@@ -4,7 +4,7 @@ const numberOfPrints = process.argv[3];
 
 const platform = require("rise-common-electron").platform;
 const path = require("path");
-const fs = require("fs");
+const fs = require("fs-extra");
 
 const launcherUtils = require("./utils/launcher-utils.js");
 const presentation = require("./presentation");
@@ -12,9 +12,7 @@ const installerStarter = require("./installer-starter");
 
 const preparePlayerModule = function () {
   const playerModulePath = path.join(launcherUtils.getInstallDir(), "modules", "player-electron");
-  if (!fs.existsSync(playerModulePath)) {
-    fs.mkdirSync(playerModulePath, { recursive: true });
-  }
+  fs.ensureDirSync(playerModulePath);
   const compatFilePath = path.join(playerModulePath, "electron-compat.txt");
   return platform.writeTextFile(compatFilePath, "v1\nv2\nv3\nv4\n");
 }
