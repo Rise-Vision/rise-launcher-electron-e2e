@@ -17,7 +17,7 @@ module.exports = function* cleanPreviousRun() {
   yield platform.deleteRecursively(launcherUtils.getInstallDir()).catch((err)=>{log.debug(err);});
   yield platform.writeTextFile(path.join(launcherUtils.getInstallDir(), "RiseDisplayNetworkII.ini"), idCfg);
   try {fs.mkdirSync(path.join(launcherUtils.getInstallDir(), "modules", "player-electron"));} catch(err) {};
-  yield platform.writeTextFile(path.join(launcherUtils.getInstallDir(), "modules", "player-electron", "electron-compat.txt"), "v1\nv2\nv3\nv4\n");
+  yield platform.writeTextFile(path.join(launcherUtils.getInstallDir(), "modules", "player-electron", "electron-compat.txt"), "v1\nv2\nv3\nv4\nv4.2.9");
   try {fs.mkdirSync(path.join(launcherUtils.getInstallDir("2016.2.4")));} catch(err) {}
   yield registry.resetDpiSettings();
   yield platform.writeTextFile(shortcuts.getAutostartPath(), "").catch((err)=>{log.debug(err);});
