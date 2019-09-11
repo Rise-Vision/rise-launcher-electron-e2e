@@ -14,7 +14,7 @@ const preparePlayerModule = function () {
   const playerModulePath = path.join(launcherUtils.getInstallDir(), "modules", "player-electron");
   fs.ensureDirSync(playerModulePath);
   const compatFilePath = path.join(playerModulePath, "electron-compat.txt");
-  return platform.writeTextFile(compatFilePath, "v1\nv2\nv3\nv4\n");
+  return platform.writeTextFile(compatFilePath, "v1\nv2\nv3\nv4\nv4.2.9");
 }
 
 const testDisplay = function () {
