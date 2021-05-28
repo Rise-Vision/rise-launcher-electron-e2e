@@ -19,7 +19,7 @@
     "rise-common-electron": "git://github.com/Rise-Vision/rise-common-electron.git#v2.2.10",
     "windows-shortcuts": "git://github.com/Rise-Vision/windows-shortcuts.git",
     "winreg": "^1.0.1",
-    "ws": "7.1.2",
+    "ws": "7.4.6",
     "yargs": "^4.4.0"
   },
   "devDependencies": {
